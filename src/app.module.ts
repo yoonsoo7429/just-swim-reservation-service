@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
+import { ResponseModule } from './common/response/response.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtService } from '@nestjs/jwt';
       }),
       inject: [ConfigService],
     }),
+    ResponseModule,
     UsersModule,
     AuthModule,
   ],
