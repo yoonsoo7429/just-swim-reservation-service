@@ -2,10 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserType } from '../enum/userType.enum';
+import { Customer } from 'src/customer/entity/customer.entity';
+import { Instructor } from 'src/instructor/entity/instrutor.entity';
 
 @Entity('users')
 export class Users {
@@ -38,4 +41,10 @@ export class Users {
 
   @UpdateDateColumn({ type: 'timestamp' })
   userUpdatedAt: Date;
+
+  @OneToMany(() => Customer, (customer) => customer.user)
+  customer: Customer[];
+
+  @OneToMany(() => Instructor, (instructor) => instructor.user)
+  instructor: Instructor[];
 }

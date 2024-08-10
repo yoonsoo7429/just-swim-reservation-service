@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseModule } from './common/response/response.module';
+import { InstructorModule } from './instructor/instructor.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { ResponseModule } from './common/response/response.module';
     ResponseModule,
     UsersModule,
     AuthModule,
+    InstructorModule,
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
