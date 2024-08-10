@@ -12,10 +12,12 @@ import { KakaoAuthGuard } from 'src/auth/guard/kakao.guard';
 import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersDto } from './dto/users.dto';
+import { ResponseService } from 'src/common/response/response.service';
 
 @Controller()
 export class UsersController {
   constructor(
+    private readonly responseService: ResponseService,
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
@@ -67,5 +69,21 @@ export class UsersController {
       const newUser = await this.usersService.createUser(newUserDto);
       const token = await this.authService.getToken(newUser.userId);
     }
+  }
+
+  /* 개발자를 위한 로그인 */
+  @Post('signIn')
+  async signIn(
+    @Body('email') email: string,
+    @Body('provider') provider: string,
+    @Res() res: Response,
+  ) {
+    const user = await this.usersService.findUserByEmail(email, provider);
+
+    let userId: number = user.userId;
+    let token: string = await this.authService.getToken(userId);
+
+    res.cookie('authorization', token);
+    return this.responseService.success(res, 'signIn success');
   }
 }
