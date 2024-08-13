@@ -9,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ResponseModule } from './common/response/response.module';
 import { InstructorModule } from './instructor/instructor.module';
 import { CustomerModule } from './customer/customer.module';
+import { LectureModule } from './lecture/lecture.module';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { CustomerModule } from './customer/customer.module';
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+        // synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -35,6 +38,8 @@ import { CustomerModule } from './customer/customer.module';
     AuthModule,
     InstructorModule,
     CustomerModule,
+    LectureModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

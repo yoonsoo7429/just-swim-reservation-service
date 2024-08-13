@@ -19,4 +19,9 @@ export class UsersService {
   async createUser(newUserDto: UsersDto): Promise<Users> {
     return await this.usersRepository.createUser(newUserDto);
   }
+
+  /* userId를 통해 조회 */
+  async findUserByPk(userId: number): Promise<Users> {
+    return await this.usersRepository.findUserByPk(userId);
+  }
 }

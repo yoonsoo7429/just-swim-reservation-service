@@ -34,4 +34,9 @@ export class UsersRepository {
 
     return user;
   }
+
+  /* userId를 통해 조회 */
+  async findUserByPk(userId: number): Promise<Users> {
+    return await this.usersRepository.findOne({ where: { userId } });
+  }
 }
