@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -11,6 +16,8 @@ import { InstructorModule } from './instructor/instructor.module';
 import { CustomerModule } from './customer/customer.module';
 import { LectureModule } from './lecture/lecture.module';
 import { MemberModule } from './member/member.module';
+import { AuthMiddleware } from './auth/middleware/auth.middleware';
+import { AwsModule } from './common/aws/aws.module';
 
 @Module({
   imports: [
@@ -34,6 +41,7 @@ import { MemberModule } from './member/member.module';
       inject: [ConfigService],
     }),
     ResponseModule,
+    AwsModule,
     UsersModule,
     AuthModule,
     InstructorModule,
@@ -44,4 +52,11 @@ import { MemberModule } from './member/member.module';
   controllers: [AppController],
   providers: [AppService, JwtService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes(
+      // Lecture
+      { path: 'lecture', method: RequestMethod.POST },
+    );
+  }
+}
