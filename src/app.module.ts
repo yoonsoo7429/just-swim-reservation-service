@@ -58,6 +58,7 @@ export class AppModule implements NestModule {
       // Lecture
       { path: 'lecture', method: RequestMethod.POST },
       { path: 'lecture', method: RequestMethod.GET },
+      { path: 'lecture/:lectureId', method: RequestMethod.GET },
     );
   }
 }

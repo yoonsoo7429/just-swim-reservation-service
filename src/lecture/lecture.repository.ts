@@ -49,4 +49,12 @@ export class LectureRepository {
       relations: ['user'],
     });
   }
+
+  /* 강의 상세 조회 */
+  async findLectureDetail(lectureId: number): Promise<Lecture> {
+    return await this.lectureRepository.findOne({
+      where: { lectureId },
+      relations: ['user', 'member'],
+    });
+  }
 }

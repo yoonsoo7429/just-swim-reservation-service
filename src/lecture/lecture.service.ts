@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LectureRepository } from './lecture.repository';
 import { LectureDto } from './dto/lecture.dto';
 import { Lecture } from './entity/lecture.entity';
@@ -54,5 +58,20 @@ export class LectureService {
         await this.memberRepository.findAllLecturesByCustomer(userId);
       return lecturesByMember.map((member) => member.lecture);
     }
+  }
+
+  /* 강의 상세 조회 */
+  async findLectureDetail(userId: number, lectureId: number): Promise<Lecture> {
+    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
+    // 강사 권한 확인
+    if (lecture.user.userId === userId) {
+      return lecture;
+    }
+    // 수강생 권한 확인
+    if (lecture.member.some((member) => member.user.userId === userId)) {
+      return lecture;
+    }
+
+    throw new UnauthorizedException('강의 상세 조회 권한이 없습니다.');
   }
 }

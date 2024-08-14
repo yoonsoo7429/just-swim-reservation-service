@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { LectureDto } from './dto/lecture.dto';
 import { Response } from 'express';
@@ -42,5 +42,21 @@ export class LectureController {
     );
 
     this.responseService.success(res, '전체 강의 조회 성공', lectures);
+  }
+
+  /* 강의 상세 조회 */
+  @Get(':lectureId')
+  async getLectureDetail(
+    @Param('lectureId') lectureId: number,
+    @Res() res: Response,
+  ) {
+    const { userId } = res.locals.user;
+
+    const lecture = await this.lectureService.findLectureDetail(
+      userId,
+      lectureId,
+    );
+
+    this.responseService.success(res, '강의 상세 조회 성공', lecture);
   }
 }
