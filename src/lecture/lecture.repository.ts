@@ -41,4 +41,12 @@ export class LectureRepository {
       { lectureQRCode },
     );
   }
+
+  /* 전체 강의 조회 (instructor) */
+  async findAllLecturesByInstructor(userId: number): Promise<Lecture[]> {
+    return await this.lectureRepository.find({
+      where: { user: { userId } },
+      relations: ['user'],
+    });
+  }
 }

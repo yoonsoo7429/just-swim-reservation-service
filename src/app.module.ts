@@ -57,6 +57,7 @@ export class AppModule implements NestModule {
     consumer.apply(AuthMiddleware).forRoutes(
       // Lecture
       { path: 'lecture', method: RequestMethod.POST },
+      { path: 'lecture', method: RequestMethod.GET },
     );
   }
 }
