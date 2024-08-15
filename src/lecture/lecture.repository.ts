@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from './entity/lecture.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { LectureDto } from './dto/lecture.dto';
+import { UpdateLectureDto } from './dto/updateLecture.dto';
 
 @Injectable()
 export class LectureRepository {
@@ -56,5 +57,13 @@ export class LectureRepository {
       where: { lectureId },
       relations: ['user', 'member'],
     });
+  }
+
+  /* 강의 수정 */
+  async updateLecture(
+    lectureId: number,
+    updateLectureDto: UpdateLectureDto,
+  ): Promise<UpdateResult> {
+    return await this.lectureRepository.update({ lectureId }, updateLectureDto);
   }
 }

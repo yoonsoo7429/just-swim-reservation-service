@@ -1,19 +1,19 @@
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class LectureDto {
-  @IsNotEmpty()
+export class UpdateLectureDto {
+  @IsOptional()
   @IsString()
   readonly lectureTitle: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly lectureContent: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly lectureTime: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly lectureDays: string;
 
@@ -21,7 +21,7 @@ export class LectureDto {
   @IsString()
   readonly lectureQRCode: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   readonly lectureEndDate: string;
 }

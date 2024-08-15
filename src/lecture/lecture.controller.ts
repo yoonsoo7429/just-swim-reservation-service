@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Res } from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { LectureDto } from './dto/lecture.dto';
 import { Response } from 'express';
 import { ResponseService } from 'src/common/response/response.service';
+import { UpdateLectureDto } from './dto/updateLecture.dto';
 
 @Controller('lecture')
 export class LectureController {
@@ -13,10 +14,7 @@ export class LectureController {
 
   /* lecture 생성 */
   @Post()
-  async createLecture(
-    @Body('lectureDto') lectureDto: LectureDto,
-    @Res() res: Response,
-  ) {
+  async createLecture(@Body() lectureDto: LectureDto, @Res() res: Response) {
     const { userId, userType } = res.locals.user;
 
     if (userType !== 'instructor') {
@@ -58,5 +56,23 @@ export class LectureController {
     );
 
     this.responseService.success(res, '강의 상세 조회 성공', lecture);
+  }
+
+  /* 강의 수정 */
+  @Put(':lectureId')
+  async updateLecture(
+    @Param('lectureId') lectureId: number,
+    @Body() updateLectureDto: UpdateLectureDto,
+    @Res() res: Response,
+  ) {
+    const { userId } = res.locals.user;
+
+    await this.lectureService.updateLecture(
+      userId,
+      lectureId,
+      updateLectureDto,
+    );
+
+    this.responseService.success(res, '강의 수정 성공');
   }
 }

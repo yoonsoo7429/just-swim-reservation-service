@@ -9,6 +9,8 @@ import { Lecture } from './entity/lecture.entity';
 import * as QRCode from 'qrcode';
 import { AwsService } from 'src/common/aws/aws.service';
 import { MemberRepository } from 'src/member/member.repository';
+import { UpdateLectureDto } from './dto/updateLecture.dto';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class LectureService {
@@ -73,5 +75,21 @@ export class LectureService {
     }
 
     throw new UnauthorizedException('강의 상세 조회 권한이 없습니다.');
+  }
+
+  /* 강의 수정 */
+  async updateLecture(
+    userId: number,
+    lectureId: number,
+    updateLectureDto: UpdateLectureDto,
+  ): Promise<void> {
+    const updateLecture = await this.lectureRespository.updateLecture(
+      lectureId,
+      updateLectureDto,
+    );
+
+    if (updateLecture.affected === 0) {
+      throw new InternalServerErrorException('강의 수정 실패');
+    }
   }
 }
