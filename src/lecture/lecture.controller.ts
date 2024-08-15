@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Put, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Res,
+} from '@nestjs/common';
 import { LectureService } from './lecture.service';
 import { LectureDto } from './dto/lecture.dto';
 import { Response } from 'express';
@@ -74,5 +83,18 @@ export class LectureController {
     );
 
     this.responseService.success(res, '강의 수정 성공');
+  }
+
+  /* 강의 삭제 */
+  @Delete(':lectureId')
+  async softDeleteLecture(
+    @Param('lectureId') lectureId: number,
+    @Res() res: Response,
+  ) {
+    const { userId } = res.locals.user;
+
+    await this.lectureService.softDeleteLecture(userId, lectureId);
+
+    this.responseService.success(res, '강의 삭제 성공');
   }
 }

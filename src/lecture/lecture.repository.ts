@@ -66,4 +66,12 @@ export class LectureRepository {
   ): Promise<UpdateResult> {
     return await this.lectureRepository.update({ lectureId }, updateLectureDto);
   }
+
+  /* 강의 삭제 (softDelete) */
+  async softDeleteLecture(lectureId: number): Promise<UpdateResult> {
+    return await this.lectureRepository.update(
+      { lectureId },
+      { lectureDeletedAt: new Date() },
+    );
+  }
 }

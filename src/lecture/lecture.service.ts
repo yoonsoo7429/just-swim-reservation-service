@@ -83,13 +83,37 @@ export class LectureService {
     lectureId: number,
     updateLectureDto: UpdateLectureDto,
   ): Promise<void> {
-    const updateLecture = await this.lectureRespository.updateLecture(
+    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
+    // 권한 확인
+    if (lecture.user.userId !== lectureId) {
+      throw new UnauthorizedException('강의 수정 권한이 없습니다.');
+    }
+
+    // 강의 수정
+    const updateResult = await this.lectureRespository.updateLecture(
       lectureId,
       updateLectureDto,
     );
 
-    if (updateLecture.affected === 0) {
+    if (updateResult.affected === 0) {
       throw new InternalServerErrorException('강의 수정 실패');
+    }
+  }
+
+  /* 강의 삭제 (softDelete) */
+  async softDeleteLecture(userId: number, lectureId: number): Promise<void> {
+    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
+    // 권한 확인
+    if (lecture.user.userId !== userId) {
+      throw new UnauthorizedException('강의 삭제 권한이 없습니다.');
+    }
+
+    // 강의 삭제
+    const softDeleteResult =
+      await this.lectureRespository.softDeleteLecture(lectureId);
+
+    if (softDeleteResult.affected === 0) {
+      throw new InternalServerErrorException('강의 삭제 실패');
     }
   }
 }
