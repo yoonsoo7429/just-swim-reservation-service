@@ -18,6 +18,8 @@ import { LectureModule } from './lecture/lecture.module';
 import { MemberModule } from './member/member.module';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { AwsModule } from './common/aws/aws.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './common/response/http-exception.filter';
 
 @Module({
   imports: [
@@ -35,8 +37,8 @@ import { AwsModule } from './common/aws/aws.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
-        // synchronize: false,
+        // synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -50,7 +52,11 @@ import { AwsModule } from './common/aws/aws.module';
     MemberModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtService],
+  providers: [
+    AppService,
+    JwtService,
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
