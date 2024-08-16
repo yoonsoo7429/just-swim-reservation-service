@@ -21,10 +21,7 @@ export class LectureService {
   ) {}
 
   /* lecture 생성 */
-  async createLecture(
-    userId: number,
-    lectureDto: LectureDto,
-  ): Promise<Lecture> {
+  async createLecture(lectureDto: LectureDto): Promise<Lecture> {
     const newLecture = await this.lectureRespository.createLecture(lectureDto);
 
     // QR 생성
@@ -85,7 +82,7 @@ export class LectureService {
   ): Promise<void> {
     const lecture = await this.lectureRespository.findLectureDetail(lectureId);
     // 권한 확인
-    if (lecture.user.userId !== lectureId) {
+    if (lecture.user.userId !== userId) {
       throw new UnauthorizedException('강의 수정 권한이 없습니다.');
     }
 

@@ -7,7 +7,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -36,7 +35,4 @@ export class Member {
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   memberDeletedAt: Date;
-
-  @OneToMany(() => Member, (member) => member.lecture)
-  member: Member[];
 }

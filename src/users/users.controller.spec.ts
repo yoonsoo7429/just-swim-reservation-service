@@ -33,13 +33,13 @@ class MockResponseService {
   internalServerError = jest.fn();
 }
 
-const mockUser = new MockUsersRepository().mockUser;
-
 describe('UsersController', () => {
   let usersController: UsersController;
-  let usersService: UsersService;
-  let authService: AuthService;
+  let usersService: MockUsersService;
+  let authService: MockAuthService;
   let responseService: MockResponseService;
+
+  const mockUser = new MockUsersRepository().mockUser;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,8 +55,8 @@ describe('UsersController', () => {
       .compile();
 
     usersController = module.get<UsersController>(UsersController);
-    usersService = module.get<UsersService>(UsersService);
-    authService = module.get<AuthService>(AuthService);
+    usersService = module.get<UsersService, MockUsersService>(UsersService);
+    authService = module.get<AuthService, MockAuthService>(AuthService);
     responseService = module.get<ResponseService, MockResponseService>(
       ResponseService,
     );
