@@ -7,6 +7,7 @@ import { Request, Response } from 'express';
 import { MockUsersRepository } from './users.service.spec';
 import { Users } from './entity/users.entity';
 import { UserType } from './enum/userType.enum';
+import { ResponseService } from 'src/common/response/response.service';
 
 class MockKakaoAuthGuard {
   canActivate = jest.fn().mockReturnValue(true);
@@ -22,12 +23,23 @@ class MockAuthService {
   getToken = jest.fn();
 }
 
+class MockResponseService {
+  success = jest.fn();
+  error = jest.fn();
+  unauthorized = jest.fn();
+  notFound = jest.fn();
+  conflict = jest.fn();
+  forbidden = jest.fn();
+  internalServerError = jest.fn();
+}
+
 const mockUser = new MockUsersRepository().mockUser;
 
 describe('UsersController', () => {
   let usersController: UsersController;
   let usersService: UsersService;
   let authService: AuthService;
+  let responseService: MockResponseService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,6 +47,7 @@ describe('UsersController', () => {
       providers: [
         { provide: UsersService, useClass: MockUsersService },
         { provide: AuthService, useClass: MockAuthService },
+        { provide: ResponseService, useClass: MockResponseService },
       ],
     })
       .overrideGuard(KakaoAuthGuard)
@@ -44,6 +57,9 @@ describe('UsersController', () => {
     usersController = module.get<UsersController>(UsersController);
     usersService = module.get<UsersService>(UsersService);
     authService = module.get<AuthService>(AuthService);
+    responseService = module.get<ResponseService, MockResponseService>(
+      ResponseService,
+    );
   });
 
   it('should be defined', () => {
@@ -120,6 +136,10 @@ describe('UsersController', () => {
         userType: UserType.Customer,
         userCreatedAt: new Date(),
         userUpdatedAt: new Date(),
+        instructor: [],
+        customer: [],
+        lecture: [],
+        member: [],
       };
 
       jest.spyOn(authService, 'validateUser').mockResolvedValue(undefined);

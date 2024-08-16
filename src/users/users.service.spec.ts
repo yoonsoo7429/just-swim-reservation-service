@@ -17,6 +17,10 @@ export class MockUsersRepository {
     profileImage: 'profileImage.png',
     userCreatedAt: new Date(),
     userUpdatedAt: new Date(),
+    instructor: [],
+    customer: [],
+    lecture: [],
+    member: [],
   };
 }
 
