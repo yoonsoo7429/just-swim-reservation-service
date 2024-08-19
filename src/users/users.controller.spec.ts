@@ -140,6 +140,7 @@ describe('UsersController', () => {
         customer: [],
         lecture: [],
         member: [],
+        attendance: [],
       };
 
       jest.spyOn(authService, 'validateUser').mockResolvedValue(undefined);

@@ -21,6 +21,7 @@ export class MockUsersRepository {
     customer: [],
     lecture: [],
     member: [],
+    attendance: [],
   };
 }
 

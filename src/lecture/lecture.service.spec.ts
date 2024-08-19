@@ -9,6 +9,7 @@ import * as QRCode from 'qrcode';
 import { MockMemberRespository } from 'src/member/member.service.spec';
 import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
+import { UpdateResult } from 'typeorm';
 
 const mockUser = new MockUsersRepository().mockUser;
 
@@ -27,6 +28,7 @@ export class MockLectureRepository {
     lectureUpdatedAt: new Date(),
     lectureDeletedAt: null,
     member: [],
+    attendance: [],
   };
 }
 
@@ -81,6 +83,7 @@ describe('LectureService', () => {
 
   describe('createLecture', () => {
     it('강의를 생성하고 강의 정보를 return', async () => {
+      const userId = mockUser.userId;
       const lectureDto: LectureDto = {
         lectureTitle: '1:4 소그룹',
         lectureContent: '1:4 소그룹 아이들 수업입니다. 초급반입니다.',
@@ -97,6 +100,7 @@ describe('LectureService', () => {
         lectureUpdatedAt: new Date(),
         lectureDeletedAt: null,
         member: [],
+        attendance: [],
       };
 
       const mockQRCode = `${newLecture.lectureId}`;
@@ -104,16 +108,17 @@ describe('LectureService', () => {
       (lectureRepository.createLecture as jest.Mock).mockResolvedValue(
         newLecture,
       );
-      jest.spyOn(lectureRepository, 'saveQRCode').mockResolvedValue({
-        generatedMaps: [],
-        raw: {},
-        affected: 1,
-      });
+      (lectureRepository.saveQRCode as jest.Mock).mockResolvedValue(
+        UpdateResult,
+      );
 
-      const result = await lectureService.createLecture(lectureDto);
+      const result = await lectureService.createLecture(lectureDto, userId);
 
       expect(result).toEqual(newLecture);
-      expect(lectureRepository.createLecture).toHaveBeenCalledWith(lectureDto);
+      expect(lectureRepository.createLecture).toHaveBeenCalledWith(
+        lectureDto,
+        userId,
+      );
       expect(QRCode.toDataURL).toHaveBeenCalledWith(
         `${process.env.SERVER_QR_CHECK_URI}?lectureId=${newLecture.lectureId}`,
       );

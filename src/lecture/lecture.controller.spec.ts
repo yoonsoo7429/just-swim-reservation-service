@@ -55,7 +55,7 @@ describe('LectureController', () => {
   });
 
   describe('createLecture', () => {
-    it('새로운 강의를 생성하고 성공 reponse를 return', async () => {
+    it('새로운 강의를 생성하고 성공 response를 return', async () => {
       const res: Partial<Response> = {
         locals: {
           user: {
