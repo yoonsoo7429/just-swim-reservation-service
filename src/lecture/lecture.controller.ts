@@ -24,13 +24,16 @@ export class LectureController {
   /* lecture 생성 */
   @Post()
   async createLecture(@Body() lectureDto: LectureDto, @Res() res: Response) {
-    const { userType } = res.locals.user;
+    const { userId, userType } = res.locals.user;
 
     if (userType !== 'instructor') {
       this.responseService.unauthorized(res, '강의 생성 권한이 없습니다.');
     }
 
-    const newLecture = await this.lectureService.createLecture(lectureDto);
+    const newLecture = await this.lectureService.createLecture(
+      lectureDto,
+      userId,
+    );
 
     this.responseService.success(res, '강의 생성 성공', newLecture);
   }

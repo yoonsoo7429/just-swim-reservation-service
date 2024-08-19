@@ -20,6 +20,7 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { AwsModule } from './common/aws/aws.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { HttpExceptionFilter } from './common/response/http-exception.filter';
     CustomerModule,
     LectureModule,
     MemberModule,
+    AttendanceModule,
   ],
   controllers: [AppController],
   providers: [
@@ -67,6 +69,9 @@ export class AppModule implements NestModule {
       { path: 'lecture/:lectureId', method: RequestMethod.GET },
       { path: 'lecture/:lectureId', method: RequestMethod.PUT },
       { path: 'lecture/:lectureId', method: RequestMethod.DELETE },
+      // Attendacne
+      { path: 'attendance', method: RequestMethod.POST },
+      { path: 'attendance', method: RequestMethod.DELETE },
     );
   }
 }

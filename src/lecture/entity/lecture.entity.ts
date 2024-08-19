@@ -1,3 +1,4 @@
+import { Attendance } from 'src/attendance/entity/attendance.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { Users } from 'src/users/entity/users.entity';
 import {
@@ -20,9 +21,6 @@ export class Lecture {
   @ManyToOne(() => Users, (user) => user.lecture)
   @JoinColumn({ name: 'userId' })
   user: Users;
-
-  @OneToMany(() => Member, (member) => member.lecture)
-  member: Member[];
 
   @Column({ type: 'varchar' })
   lectureTitle: string;
@@ -50,4 +48,10 @@ export class Lecture {
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   lectureDeletedAt: Date;
+
+  @OneToMany(() => Member, (member) => member.lecture)
+  member: Member[];
+
+  @OneToMany(() => Attendance, (attendance) => attendance.lecture)
+  attendance: Attendance[];
 }

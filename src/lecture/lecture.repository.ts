@@ -12,7 +12,10 @@ export class LectureRepository {
   ) {}
 
   /* lecture 생성 */
-  async createLecture(lectureDto: LectureDto): Promise<Lecture> {
+  async createLecture(
+    lectureDto: LectureDto,
+    userId: number,
+  ): Promise<Lecture> {
     const {
       lectureTitle,
       lectureContent,
@@ -22,6 +25,7 @@ export class LectureRepository {
     } = lectureDto;
 
     const lecture = new Lecture();
+    lecture.user.userId = userId;
     lecture.lectureTitle = lectureTitle;
     lecture.lectureContent = lectureContent;
     lecture.lectureTime = lectureTime;

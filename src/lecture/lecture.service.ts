@@ -21,8 +21,14 @@ export class LectureService {
   ) {}
 
   /* lecture 생성 */
-  async createLecture(lectureDto: LectureDto): Promise<Lecture> {
-    const newLecture = await this.lectureRespository.createLecture(lectureDto);
+  async createLecture(
+    lectureDto: LectureDto,
+    userId: number,
+  ): Promise<Lecture> {
+    const newLecture = await this.lectureRespository.createLecture(
+      lectureDto,
+      userId,
+    );
 
     // QR 생성
     const qrCodeData = await QRCode.toDataURL(
