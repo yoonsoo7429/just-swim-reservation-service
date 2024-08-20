@@ -16,4 +16,12 @@ export class MemberRepository {
       relations: ['lecture'],
     });
   }
+
+  /* 강의에 해당하는 수강생 목록 조회 */
+  async findAllMembersByLectureId(lectureId: number): Promise<Member[]> {
+    return await this.memberRepository.find({
+      where: { lecture: { lectureId } },
+      relations: ['lecture'],
+    });
+  }
 }

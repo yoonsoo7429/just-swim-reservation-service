@@ -72,6 +72,8 @@ export class AppModule implements NestModule {
       // Attendacne
       { path: 'attendance', method: RequestMethod.POST },
       { path: 'attendance', method: RequestMethod.DELETE },
+      // Member
+      { path: 'member/:lectureId', method: RequestMethod.GET },
     );
   }
 }
