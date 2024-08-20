@@ -4,6 +4,7 @@ import { CustomerService } from './customer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Customer } from './entity/customer.entity';
 import { UsersModule } from 'src/users/users.module';
+import { CustomerRepository } from './customer.repository';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { UsersModule } from 'src/users/users.module';
     forwardRef(() => UsersModule),
   ],
   controllers: [CustomerController],
-  providers: [CustomerService],
-  exports: [CustomerService],
+  providers: [CustomerService, CustomerRepository],
+  exports: [CustomerService, CustomerRepository],
 })
 export class CustomerModule {}

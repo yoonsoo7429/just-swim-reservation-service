@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   Res,
@@ -13,6 +14,7 @@ import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersDto } from './dto/users.dto';
 import { ResponseService } from 'src/common/response/response.service';
+import { UserType } from './enum/userType.enum';
 
 @Controller()
 export class UsersController {
@@ -69,6 +71,24 @@ export class UsersController {
       const newUser = await this.usersService.createUser(newUserDto);
       const token = await this.authService.getToken(newUser.userId);
     }
+  }
+
+  /* userType 선택 */
+  @Post('user/:userType')
+  async selectUserType(
+    @Param('userType') userType: UserType,
+    @Res() res: Response,
+  ) {
+    const { userId } = res.locals.user;
+
+    // userType 기본 체크
+    if (!Object.values(UserType).includes(userType)) {
+      this.responseService.error(res, '올바른 userType을 지정해주세요.', 400);
+    }
+
+    await this.usersService.selectUserType(userId, userType);
+
+    this.responseService.success(res, 'userType 지정 완료');
   }
 
   /* 개발자를 위한 로그인 */
