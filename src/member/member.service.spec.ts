@@ -3,6 +3,7 @@ import { MemberService } from './member.service';
 import { Member } from './entity/member.entity';
 import { Users } from 'src/users/entity/users.entity';
 import { Lecture } from 'src/lecture/entity/lecture.entity';
+import { MemberRepository } from './member.repository';
 
 export class MockMemberRespository {
   readonly mockMember: Member = {
@@ -17,19 +18,45 @@ export class MockMemberRespository {
 }
 
 describe('MemberService', () => {
-  let service: MemberService;
+  let memberService: MemberService;
+  let memberRepository: MemberRepository;
 
   const mockMember = new MockMemberRespository().mockMember;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MemberService],
+      providers: [
+        MemberService,
+        {
+          provide: MemberRepository,
+          useValue: {
+            findAllLecturesByCustomer: jest.fn(),
+            findAllMembersByLectureId: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
-    service = module.get<MemberService>(MemberService);
+    memberService = module.get<MemberService>(MemberService);
+    memberRepository = module.get<MemberRepository>(MemberRepository);
+  });
+  it('should be defined', () => {
+    expect(memberService).toBeDefined();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('findAllMembersByLectureId', () => {
+    it('lectureId에 해당하는 member를 모두 조회하여 return', async () => {
+      const lectureId = 1;
+      jest
+        .spyOn(memberRepository, 'findAllMembersByLectureId')
+        .mockResolvedValue([mockMember]);
+
+      const result = await memberService.findAllMembersByLectureId(lectureId);
+
+      expect(result).toEqual([mockMember]);
+      expect(memberRepository.findAllMembersByLectureId).toHaveBeenCalledWith(
+        lectureId,
+      );
+    });
   });
 });
