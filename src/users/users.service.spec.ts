@@ -4,6 +4,11 @@ import { UsersRepository } from './users.repository';
 import { Users } from './entity/users.entity';
 import { UserType } from './enum/userType.enum';
 import { UsersDto } from './dto/users.dto';
+import { CustomerRepository } from 'src/customer/customer.repository';
+import { InstructorRepository } from 'src/instructor/instructor.repository';
+import { UpdateResult } from 'typeorm';
+import { MockCustomerRepository } from 'src/customer/customer.service.spec';
+import { MockInstructorRepository } from 'src/instructor/instructor.service.spec';
 
 export class MockUsersRepository {
   readonly mockUser: Users = {
@@ -25,11 +30,15 @@ export class MockUsersRepository {
   };
 }
 
-const mockUser = new MockUsersRepository().mockUser;
-
 describe('UsersService', () => {
   let usersService: UsersService;
   let usersRepository: UsersRepository;
+  let customerRepository: CustomerRepository;
+  let instructorRepository: InstructorRepository;
+
+  const mockUser = new MockUsersRepository().mockUser;
+  const mockCustomer = new MockCustomerRepository().mockCustomer;
+  const mockInstructor = new MockInstructorRepository().mockInstructor;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,13 +46,29 @@ describe('UsersService', () => {
         UsersService,
         {
           provide: UsersRepository,
-          useValue: { findUserByEmail: jest.fn(), createUser: jest.fn() },
+          useValue: {
+            findUserByEmail: jest.fn(),
+            findUserByPk: jest.fn(),
+            createUser: jest.fn(),
+            selectUserType: jest.fn(),
+          },
+        },
+        {
+          provide: CustomerRepository,
+          useValue: { createCustomer: jest.fn() },
+        },
+        {
+          provide: InstructorRepository,
+          useValue: { createInstructor: jest.fn() },
         },
       ],
     }).compile();
 
     usersService = module.get<UsersService>(UsersService);
     usersRepository = module.get<UsersRepository>(UsersRepository);
+    customerRepository = module.get<CustomerRepository>(CustomerRepository);
+    instructorRepository =
+      module.get<InstructorRepository>(InstructorRepository);
   });
 
   it('should be defined', () => {
@@ -86,7 +111,6 @@ describe('UsersService', () => {
   describe('createUser', () => {
     it('새로운 user를 생성 후에 user를 return', async () => {
       const newUserDto: UsersDto = {
-        userType: UserType.Customer,
         email: 'new@example.com',
         provider: 'kakao',
         name: '홍길순',
@@ -96,7 +120,6 @@ describe('UsersService', () => {
       };
       const newUser = new Users();
       newUser.userId = 2;
-      newUser.userType = newUserDto.userType;
       newUser.email = newUserDto.email;
       newUser.provider = newUserDto.provider;
       newUser.name = newUserDto.name;
@@ -110,6 +133,62 @@ describe('UsersService', () => {
       const result = await usersService.createUser(newUserDto);
       expect(result).toEqual(newUser);
       expect(usersRepository.createUser).toHaveBeenCalledWith(newUserDto);
+    });
+  });
+
+  describe('selectUserType', () => {
+    it('customer를 선택하고 UpdateResult를 return', async () => {
+      const userId = 1;
+      const userType = UserType.Customer;
+      mockUser.userType = null;
+
+      (usersRepository.findUserByPk as jest.Mock).mockResolvedValue(mockUser);
+      (usersRepository.selectUserType as jest.Mock).mockResolvedValue(
+        UpdateResult,
+      );
+      (customerRepository.createCustomer as jest.Mock).mockResolvedValue(
+        mockCustomer,
+      );
+      (instructorRepository.createInstructor as jest.Mock).mockResolvedValue(
+        mockInstructor,
+      );
+
+      await usersService.selectUserType(userId, userType);
+
+      expect(usersRepository.selectUserType).toHaveBeenCalledWith(
+        userId,
+        userType,
+      );
+      expect(customerRepository.createCustomer).toHaveBeenCalledWith(userId);
+      expect(instructorRepository.createInstructor).not.toHaveBeenCalled();
+    });
+
+    it('instructor를 선택하고 UpdateResult를 return', async () => {
+      const userId = 1;
+      const userType = UserType.Instructor;
+      mockUser.userType = null;
+
+      (usersRepository.findUserByPk as jest.Mock).mockResolvedValue(mockUser);
+      (usersRepository.selectUserType as jest.Mock).mockResolvedValue(
+        UpdateResult,
+      );
+      (customerRepository.createCustomer as jest.Mock).mockResolvedValue(
+        mockCustomer,
+      );
+      (instructorRepository.createInstructor as jest.Mock).mockResolvedValue(
+        mockInstructor,
+      );
+
+      await usersService.selectUserType(userId, userType);
+
+      expect(usersRepository.selectUserType).toHaveBeenCalledWith(
+        userId,
+        userType,
+      );
+      expect(customerRepository.createCustomer).not.toHaveBeenCalled();
+      expect(instructorRepository.createInstructor).toHaveBeenCalledWith(
+        userId,
+      );
     });
   });
 });
