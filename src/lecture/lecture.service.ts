@@ -53,7 +53,10 @@ export class LectureService {
   }
 
   /* 전체 강의 조회 */
-  async findAllLectures(userId: number, userType: string): Promise<Lecture[]> {
+  async findAllLecturesForSchedule(
+    userId: number,
+    userType: string,
+  ): Promise<Lecture[]> {
     if (userType === 'instructor') {
       return await this.lectureRespository.findAllLecturesByInstructor(userId);
     }

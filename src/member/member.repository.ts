@@ -11,10 +11,13 @@ export class MemberRepository {
 
   /* 전체 강의 조회 (customer) */
   async findAllLecturesByCustomer(userId: number): Promise<Member[]> {
-    return await this.memberRepository.find({
-      where: { user: { userId } },
-      relations: ['lecture'],
-    });
+    return await this.memberRepository
+      .createQueryBuilder('member')
+      .leftJoinAndSelect('member.lecture', 'lecture')
+      .leftJoinAndSelect('member.user', 'user')
+      .where('user.userId = :userId', { userId })
+      .andWhere('lecture.lectureDeletedAt IS NULL')
+      .getMany();
   }
 
   /* 강의에 해당하는 수강생 목록 조회 */

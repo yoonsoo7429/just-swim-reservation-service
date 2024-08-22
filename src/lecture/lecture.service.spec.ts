@@ -95,7 +95,12 @@ describe('LectureService', () => {
       const newLecture: Lecture = {
         lectureId: 1,
         user: mockUser,
-        ...lectureDto,
+        lectureTitle: lectureDto.lectureTitle,
+        lectureContent: lectureDto.lectureContent,
+        lectureDays: lectureDto.lectureDays,
+        lectureTime: lectureDto.lectureTime,
+        lectureQRCode: lectureDto.lectureQRCode,
+        lectureEndDate: lectureDto.lectureEndDate,
         lectureCreatedAt: new Date(),
         lectureUpdatedAt: new Date(),
         lectureDeletedAt: null,
@@ -137,7 +142,10 @@ describe('LectureService', () => {
         .spyOn(lectureRepository, 'findAllLecturesByInstructor')
         .mockResolvedValue([mockLecture]);
 
-      const result = await lectureService.findAllLectures(userId, userType);
+      const result = await lectureService.findAllLecturesForSchedule(
+        userId,
+        userType,
+      );
 
       expect(result).toEqual([mockLecture]);
       expect(
@@ -152,7 +160,10 @@ describe('LectureService', () => {
         .spyOn(memberRepository, 'findAllLecturesByCustomer')
         .mockResolvedValue([mockMember]);
 
-      const result = await lectureService.findAllLectures(userId, userType);
+      const result = await lectureService.findAllLecturesForSchedule(
+        userId,
+        userType,
+      );
 
       expect(result).toEqual([[mockMember][0].lecture]);
       expect(memberRepository.findAllLecturesByCustomer).toHaveBeenCalledWith(

@@ -50,7 +50,7 @@ export class LectureRepository {
   /* 전체 강의 조회 (instructor) */
   async findAllLecturesByInstructor(userId: number): Promise<Lecture[]> {
     return await this.lectureRepository.find({
-      where: { user: { userId } },
+      where: { user: { userId }, lectureDeletedAt: null },
       relations: ['user'],
     });
   }
@@ -58,7 +58,7 @@ export class LectureRepository {
   /* 강의 상세 조회 */
   async findLectureDetail(lectureId: number): Promise<Lecture> {
     return await this.lectureRepository.findOne({
-      where: { lectureId },
+      where: { lectureId, lectureDeletedAt: null },
       relations: ['user', 'member'],
     });
   }

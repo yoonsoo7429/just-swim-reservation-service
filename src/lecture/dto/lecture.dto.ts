@@ -21,7 +21,7 @@ export class LectureDto {
   @IsString()
   readonly lectureQRCode: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  readonly lectureEndDate: string;
+  readonly lectureEndDate?: string;
 }

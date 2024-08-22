@@ -9,7 +9,7 @@ import { UpdateLectureDto } from './dto/updateLecture.dto';
 
 class MockLectureService {
   createLecture = jest.fn();
-  findAllLectures = jest.fn();
+  findAllLecturesForSchedule = jest.fn();
   findLectureDetail = jest.fn();
   updateLecture = jest.fn();
   softDeleteLecture = jest.fn();
@@ -96,9 +96,11 @@ describe('LectureController', () => {
         json: jest.fn(),
       } as any;
 
-      lectureService.findAllLectures.mockResolvedValue([mockLecture]);
+      lectureService.findAllLecturesForSchedule.mockResolvedValue([
+        mockLecture,
+      ]);
 
-      await lectureController.getAllLectures(res as Response);
+      await lectureController.getAllLecturesForSchedule(res as Response);
 
       expect(responseService.success).toHaveBeenCalledWith(
         res,

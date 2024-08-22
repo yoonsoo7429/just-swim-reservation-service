@@ -38,12 +38,12 @@ export class LectureController {
     this.responseService.success(res, '강의 생성 성공', newLecture);
   }
 
-  /* 강의 전체 조회 */
-  @Get()
-  async getAllLectures(@Res() res: Response) {
+  /* schedule - 강의 전체 조회(삭제된 강의 제외) */
+  @Get('schedule')
+  async getAllLecturesForSchedule(@Res() res: Response) {
     const { userId, userType } = res.locals.user;
 
-    const lectures = await this.lectureService.findAllLectures(
+    const lectures = await this.lectureService.findAllLecturesForSchedule(
       userId,
       userType,
     );
