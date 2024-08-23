@@ -21,6 +21,7 @@ import { AwsModule } from './common/aws/aws.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
 import { AttendanceModule } from './attendance/attendance.module';
+import { MakeUpLectureModule } from './make-up-lecture/make-up-lecture.module';
 
 @Module({
   imports: [
@@ -38,8 +39,8 @@ import { AttendanceModule } from './attendance/attendance.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        // synchronize: true,
-        synchronize: false,
+        synchronize: true,
+        // synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -52,6 +53,7 @@ import { AttendanceModule } from './attendance/attendance.module';
     LectureModule,
     MemberModule,
     AttendanceModule,
+    MakeUpLectureModule,
   ],
   controllers: [AppController],
   providers: [
@@ -74,6 +76,10 @@ export class AppModule implements NestModule {
       { path: 'attendance', method: RequestMethod.DELETE },
       // Member
       { path: 'member/:lectureId', method: RequestMethod.GET },
+      // MakeUpLecture
+      { path: 'makeUpLecture', method: RequestMethod.POST },
+      { path: 'makeUpLecture/:lectureId', method: RequestMethod.GET },
+      { path: 'makeUpLecture/:lectureId', method: RequestMethod.DELETE },
     );
   }
 }

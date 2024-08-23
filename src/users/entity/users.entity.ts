@@ -12,6 +12,7 @@ import { Instructor } from 'src/instructor/entity/instrutor.entity';
 import { Lecture } from 'src/lecture/entity/lecture.entity';
 import { Member } from 'src/member/entity/member.entity';
 import { Attendance } from 'src/attendance/entity/attendance.entity';
+import { MakeUpLecture } from 'src/make-up-lecture/entity/make-up-lecture.entity';
 
 @Entity('users')
 export class Users {
@@ -59,4 +60,7 @@ export class Users {
 
   @OneToMany(() => Attendance, (attendance) => attendance.user)
   attendance: Attendance[];
+
+  @OneToMany(() => MakeUpLecture, (makeUpLecture) => makeUpLecture.user)
+  makeUpLecture: MakeUpLecture[];
 }
