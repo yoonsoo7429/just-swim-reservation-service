@@ -17,11 +17,13 @@ export class MakeUpLectureRepository {
     makeUpLectureDto: MakeUpLectureDto,
   ): Promise<MakeUpLecture> {
     const makeUpLecture = new MakeUpLecture();
-    const { lectureId, makeUpLectureDay, makeUpLectureTime } = makeUpLectureDto;
+    const { lectureId, makeUpLectureDay, makeUpLectureTime, makeUpCapacity } =
+      makeUpLectureDto;
     makeUpLecture.user.userId = userId;
     makeUpLecture.lecture.lectureId = lectureId;
     makeUpLecture.makeUpLectureDay = makeUpLectureDay;
     makeUpLecture.makeUpLectureTime = makeUpLectureTime;
+    makeUpLecture.makeUpCapacity = makeUpCapacity;
 
     await this.makeUpLectureRepository.save(makeUpLecture);
     return makeUpLecture;

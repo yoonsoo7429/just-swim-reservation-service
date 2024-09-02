@@ -22,6 +22,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
 import { AttendanceModule } from './attendance/attendance.module';
 import { MakeUpLectureModule } from './make-up-lecture/make-up-lecture.module';
+import { MakeUpRegistrationModule } from './make-up-registration/make-up-registration.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { MakeUpLectureModule } from './make-up-lecture/make-up-lecture.module';
     MemberModule,
     AttendanceModule,
     MakeUpLectureModule,
+    MakeUpRegistrationModule,
   ],
   controllers: [AppController],
   providers: [

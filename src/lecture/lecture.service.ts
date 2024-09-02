@@ -77,6 +77,8 @@ export class LectureService {
     }
     // 수강생 권한 확인
     if (lecture.member.some((member) => member.user.userId === userId)) {
+      // 같은 멤버의 정보는 제외
+      delete lecture.member;
       return lecture;
     }
 

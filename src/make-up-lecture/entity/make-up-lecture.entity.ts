@@ -1,4 +1,5 @@
 import { Lecture } from 'src/lecture/entity/lecture.entity';
+import { MakeUpRegistration } from 'src/make-up-registration/entity/make-up-registration.entity';
 import { Users } from 'src/users/entity/users.entity';
 import {
   Column,
@@ -7,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,6 +32,9 @@ export class MakeUpLecture {
   @Column({ type: 'varchar' })
   makeUpLectureTime: string;
 
+  @Column({ type: 'int' })
+  makeUpCapacity: number;
+
   @CreateDateColumn({ type: 'timestamp' })
   makeUpLectureCreatedAt: Date;
 
@@ -38,4 +43,10 @@ export class MakeUpLecture {
 
   @DeleteDateColumn({ type: 'timestamp', nullable: true })
   makeUpLectureDeletedAt: Date;
+
+  @OneToMany(
+    () => MakeUpRegistration,
+    (makeUpRegistration) => makeUpRegistration.makeUpLecture,
+  )
+  makeUpRegistration: MakeUpRegistration[];
 }
