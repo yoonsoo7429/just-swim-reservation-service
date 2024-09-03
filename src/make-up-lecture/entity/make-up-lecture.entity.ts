@@ -30,7 +30,10 @@ export class MakeUpLecture {
   makeUpLectureDay: string;
 
   @Column({ type: 'varchar' })
-  makeUpLectureTime: string;
+  makeUpLectureStartTime: string;
+
+  @Column({ type: 'varchar' })
+  makeUpLectureEndTime: string;
 
   @Column({ type: 'int' })
   makeUpCapacity: number;

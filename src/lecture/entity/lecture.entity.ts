@@ -30,7 +30,10 @@ export class Lecture {
   lectureContent: string;
 
   @Column({ type: 'varchar' })
-  lectureTime: string;
+  lectureStartTime: string;
+
+  @Column({ type: 'varchar' })
+  lectureEndTime: string;
 
   @Column({ type: 'varchar' })
   lectureDays: string;

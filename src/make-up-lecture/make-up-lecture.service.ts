@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { MakeUpLectureRepository } from './make-up-lecture.repository';
 import { MakeUpLectureDto } from './dto/make-up-lecture.dto';
 import { MakeUpLecture } from './entity/make-up-lecture.entity';
@@ -17,6 +21,26 @@ export class MakeUpLectureService {
     userId: number,
     makeUpLectureDto: MakeUpLectureDto,
   ): Promise<MakeUpLecture> {
+    const {
+      lectureId,
+      makeUpLectureDay,
+      makeUpLectureStartTime,
+      makeUpLectureEndTime,
+    } = makeUpLectureDto;
+
+    const existingMakeUpLecture =
+      await this.makeUpLectureRepository.findMakeUpLectureWithTimeConflict(
+        userId,
+        lectureId,
+        makeUpLectureDay,
+        makeUpLectureStartTime,
+        makeUpLectureEndTime,
+      );
+
+    if (existingMakeUpLecture) {
+      throw new ConflictException('동일한 시간 대에 보충 강의가 존재합니다.');
+    }
+
     return await this.makeUpLectureRepository.createMakeUpLecture(
       userId,
       makeUpLectureDto,
@@ -50,13 +74,13 @@ export class MakeUpLectureService {
     userId: number,
     lectureId: number,
     makeUpLectureDay: string,
-    makeUpLectureTime: string,
+    makeUpLectureStartTime: string,
   ): Promise<DeleteResult> {
     const result = await this.makeUpLectureRepository.deleteMakeUpLecture(
       userId,
       lectureId,
       makeUpLectureDay,
-      makeUpLectureTime,
+      makeUpLectureStartTime,
     );
 
     if (result.affected === 0) {

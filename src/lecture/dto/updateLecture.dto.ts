@@ -11,7 +11,11 @@ export class UpdateLectureDto {
 
   @IsOptional()
   @IsString()
-  readonly lectureTime?: string;
+  readonly lectureStartTime?: string;
+
+  @IsOptional()
+  @IsString()
+  readonly lectureEndTime?: string;
 
   @IsOptional()
   @IsString()

@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -10,7 +11,6 @@ import * as QRCode from 'qrcode';
 import { AwsService } from 'src/common/aws/aws.service';
 import { MemberRepository } from 'src/member/member.repository';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
-import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class LectureService {
@@ -25,6 +25,21 @@ export class LectureService {
     lectureDto: LectureDto,
     userId: number,
   ): Promise<Lecture> {
+    // 동일한 시간대 확인
+    const { lectureDays, lectureStartTime, lectureEndTime } = lectureDto;
+
+    const existingLecture =
+      await this.lectureRespository.findLectureWithTimeConflict(
+        userId,
+        lectureDays,
+        lectureStartTime,
+        lectureEndTime,
+      );
+
+    if (existingLecture) {
+      throw new ConflictException('동일한 시간 대에 강의가 존재합니다.');
+    }
+
     const newLecture = await this.lectureRespository.createLecture(
       lectureDto,
       userId,

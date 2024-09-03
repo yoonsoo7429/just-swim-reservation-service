@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from './entity/lecture.entity';
-import { Repository, UpdateResult } from 'typeorm';
+import { LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
 import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
 
@@ -19,7 +19,8 @@ export class LectureRepository {
     const {
       lectureTitle,
       lectureContent,
-      lectureTime,
+      lectureStartTime,
+      lectureEndTime,
       lectureDays,
       lectureEndDate,
     } = lectureDto;
@@ -28,7 +29,8 @@ export class LectureRepository {
     lecture.user.userId = userId;
     lecture.lectureTitle = lectureTitle;
     lecture.lectureContent = lectureContent;
-    lecture.lectureTime = lectureTime;
+    lecture.lectureStartTime = lectureStartTime;
+    lecture.lectureEndTime = lectureEndTime;
     lecture.lectureDays = lectureDays;
     lecture.lectureEndDate = lectureEndDate;
     await this.lectureRepository.save(lecture);
@@ -77,5 +79,22 @@ export class LectureRepository {
       { lectureId },
       { lectureDeletedAt: new Date() },
     );
+  }
+
+  /* 겹치는 강습 확인 */
+  async findLectureWithTimeConflict(
+    userId: number,
+    lectureDays: string,
+    lectureStartTime: string,
+    lectureEndTime: string,
+  ): Promise<Lecture> {
+    return await this.lectureRepository.findOne({
+      where: {
+        user: { userId },
+        lectureDays,
+        lectureStartTime: LessThan(lectureStartTime),
+        lectureEndTime: MoreThan(lectureEndTime),
+      },
+    });
   }
 }

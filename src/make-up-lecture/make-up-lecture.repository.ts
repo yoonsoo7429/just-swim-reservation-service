@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MakeUpLecture } from './entity/make-up-lecture.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, LessThan, MoreThan, Repository } from 'typeorm';
 import { MakeUpLectureDto } from './dto/make-up-lecture.dto';
 
 @Injectable()
@@ -16,13 +16,20 @@ export class MakeUpLectureRepository {
     userId: number,
     makeUpLectureDto: MakeUpLectureDto,
   ): Promise<MakeUpLecture> {
+    const {
+      lectureId,
+      makeUpLectureDay,
+      makeUpLectureStartTime,
+      makeUpLectureEndTime,
+      makeUpCapacity,
+    } = makeUpLectureDto;
+
     const makeUpLecture = new MakeUpLecture();
-    const { lectureId, makeUpLectureDay, makeUpLectureTime, makeUpCapacity } =
-      makeUpLectureDto;
     makeUpLecture.user.userId = userId;
     makeUpLecture.lecture.lectureId = lectureId;
     makeUpLecture.makeUpLectureDay = makeUpLectureDay;
-    makeUpLecture.makeUpLectureTime = makeUpLectureTime;
+    makeUpLecture.makeUpLectureStartTime = makeUpLectureStartTime;
+    makeUpLecture.makeUpLectureEndTime = makeUpLectureEndTime;
     makeUpLecture.makeUpCapacity = makeUpCapacity;
 
     await this.makeUpLectureRepository.save(makeUpLecture);
@@ -43,13 +50,41 @@ export class MakeUpLectureRepository {
     userId: number,
     lectureId: number,
     makeUpLectureDay: string,
-    makeUpLectureTime: string,
+    makeUpLectureStartTime: string,
   ): Promise<DeleteResult> {
     return await this.makeUpLectureRepository.delete({
       user: { userId },
       lecture: { lectureId },
       makeUpLectureDay,
-      makeUpLectureTime,
+      makeUpLectureStartTime,
+    });
+  }
+
+  /* 겹치는 보충 강습 확인 */
+  async findMakeUpLectureWithTimeConflict(
+    userId: number,
+    lectureId: number,
+    makeUpLectureDay: string,
+    makeUpLectureStartTime: string,
+    makeUpLectureEndTime: string,
+  ): Promise<MakeUpLecture> {
+    return await this.makeUpLectureRepository.findOne({
+      where: {
+        user: { userId },
+        lecture: { lectureId },
+        makeUpLectureDay,
+        makeUpLectureStartTime: LessThan(makeUpLectureEndTime),
+        makeUpLectureEndTime: MoreThan(makeUpLectureStartTime),
+      },
+    });
+  }
+
+  /* 보충 강의 상세 조회 */
+  async findMakeUpLectureDetail(
+    makeUpLectureId: number,
+  ): Promise<MakeUpLecture> {
+    return await this.makeUpLectureRepository.findOne({
+      where: { makeUpLectureId },
     });
   }
 }

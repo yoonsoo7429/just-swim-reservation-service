@@ -11,7 +11,11 @@ export class MakeUpLectureDto {
 
   @IsNotEmpty()
   @IsString()
-  readonly makeUpLectureTime: string;
+  readonly makeUpLectureStartTime: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly makeUpLectureEndTime: string;
 
   @IsNotEmpty()
   @IsNumber()

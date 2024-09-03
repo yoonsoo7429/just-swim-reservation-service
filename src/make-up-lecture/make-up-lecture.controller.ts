@@ -65,7 +65,7 @@ export class MakeUpLectureController {
   async deleteMakeUpLecture(
     @Param('lectureId') lectureId: number,
     @Query('makeUpLectureDay') makeUpLectureDay: string,
-    @Query('makeUpLectureTime') makeUpLectureTime: string,
+    @Query('makeUpLectureStartTime') makeUpLectureStartTime: string,
     @Res() res: Response,
   ) {
     const { userId } = res.locals.user;
@@ -74,7 +74,7 @@ export class MakeUpLectureController {
       userId,
       lectureId,
       makeUpLectureDay,
-      makeUpLectureTime,
+      makeUpLectureStartTime,
     );
 
     this.responseService.success(res, '보강 취소 성공');

@@ -33,4 +33,11 @@ export class MakeUpRegistrationRepository {
       makeUpLecture: { makeUpLectureId },
     });
   }
+
+  /* 보강 예약한 횟수 조회 */
+  async registrationCount(makeUpLectureId: number): Promise<number> {
+    return await this.makeUpRegistrationRepository.count({
+      where: { makeUpLecture: { makeUpLectureId } },
+    });
+  }
 }
