@@ -40,8 +40,8 @@ import { MakeUpRegistrationModule } from './make-up-registration/make-up-registr
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
-        // synchronize: false,
+        // synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -82,6 +82,15 @@ export class AppModule implements NestModule {
       { path: 'makeUpLecture', method: RequestMethod.POST },
       { path: 'makeUpLecture/:lectureId', method: RequestMethod.GET },
       { path: 'makeUpLecture/:lectureId', method: RequestMethod.DELETE },
+      // MakeUpRegistration
+      {
+        path: 'makeUpRegistration/:makeUpLectureId',
+        method: RequestMethod.POST,
+      },
+      {
+        path: 'makeUpRegistration/:makeUpLectureId',
+        method: RequestMethod.DELETE,
+      },
     );
   }
 }
