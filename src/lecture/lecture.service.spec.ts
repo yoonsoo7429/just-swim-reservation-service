@@ -21,7 +21,8 @@ export class MockLectureRepository {
     lectureContent:
       '1:4 소그룹 아이들 수업입니다. 개인 진도에 맞춰 진행합니다.',
     lectureDays: '월수금',
-    lectureTime: '16:00-17:00',
+    lectureStartTime: '16:00',
+    lectureEndTime: '17:00',
     lectureEndDate: '2024.10.26',
     lectureQRCode: 'QRCode',
     lectureCreatedAt: new Date(),
@@ -29,6 +30,7 @@ export class MockLectureRepository {
     lectureDeletedAt: null,
     member: [],
     attendance: [],
+    makeUpLecture: [],
   };
 }
 
@@ -54,6 +56,7 @@ describe('LectureService', () => {
             findLectureDetail: jest.fn(),
             updateLecture: jest.fn(),
             softDeleteLecture: jest.fn(),
+            findLectureWithTimeConflict: jest.fn(),
           },
         },
         {
@@ -88,7 +91,8 @@ describe('LectureService', () => {
         lectureTitle: '1:4 소그룹',
         lectureContent: '1:4 소그룹 아이들 수업입니다. 초급반입니다.',
         lectureDays: '화목',
-        lectureTime: '18:00-19:00',
+        lectureStartTime: '18:00',
+        lectureEndTime: '19:00',
         lectureEndDate: '2024.10.30',
         lectureQRCode: 'QRCode',
       };
@@ -98,7 +102,8 @@ describe('LectureService', () => {
         lectureTitle: lectureDto.lectureTitle,
         lectureContent: lectureDto.lectureContent,
         lectureDays: lectureDto.lectureDays,
-        lectureTime: lectureDto.lectureTime,
+        lectureStartTime: lectureDto.lectureStartTime,
+        lectureEndTime: lectureDto.lectureEndTime,
         lectureQRCode: lectureDto.lectureQRCode,
         lectureEndDate: lectureDto.lectureEndDate,
         lectureCreatedAt: new Date(),
@@ -106,6 +111,7 @@ describe('LectureService', () => {
         lectureDeletedAt: null,
         member: [],
         attendance: [],
+        makeUpLecture: [],
       };
 
       const mockQRCode = `${newLecture.lectureId}`;

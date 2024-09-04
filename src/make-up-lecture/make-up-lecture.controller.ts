@@ -43,7 +43,7 @@ export class MakeUpLectureController {
     this.responseService.success(res, '보강 오픈 성공');
   }
 
-  /* instructor가 등록한 보강 가능 날짜 가져오기 */
+  /* 보강 가능 날짜 가져오기 */
   @Get(':lectureId')
   async getMakeUpLecturesByLectureId(
     @Param('lectureId') lectureId: number,
