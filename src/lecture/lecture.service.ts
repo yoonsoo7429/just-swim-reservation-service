@@ -9,7 +9,6 @@ import { LectureDto } from './dto/lecture.dto';
 import { Lecture } from './entity/lecture.entity';
 import * as QRCode from 'qrcode';
 import { AwsService } from 'src/common/aws/aws.service';
-import { MemberRepository } from 'src/member/member.repository';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
 
 @Injectable()
@@ -17,7 +16,6 @@ export class LectureService {
   constructor(
     private readonly awsService: AwsService,
     private readonly lectureRespository: LectureRepository,
-    private readonly memberRepository: MemberRepository,
   ) {}
 
   /* lecture 생성 */
@@ -75,12 +73,6 @@ export class LectureService {
     if (userType === 'instructor') {
       return await this.lectureRespository.findAllLecturesByInstructor(userId);
     }
-
-    if (userType === 'customer') {
-      const lecturesByMember =
-        await this.memberRepository.findAllLecturesByCustomer(userId);
-      return lecturesByMember.map((member) => member.lecture);
-    }
   }
 
   /* 강의 상세 조회 */
@@ -88,12 +80,6 @@ export class LectureService {
     const lecture = await this.lectureRespository.findLectureDetail(lectureId);
     // 강사 권한 확인
     if (lecture.user.userId === userId) {
-      return lecture;
-    }
-    // 수강생 권한 확인
-    if (lecture.member.some((member) => member.user.userId === userId)) {
-      // 같은 멤버의 정보는 제외
-      delete lecture.member;
       return lecture;
     }
 

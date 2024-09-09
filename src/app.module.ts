@@ -15,14 +15,10 @@ import { ResponseModule } from './common/response/response.module';
 import { InstructorModule } from './instructor/instructor.module';
 import { CustomerModule } from './customer/customer.module';
 import { LectureModule } from './lecture/lecture.module';
-import { MemberModule } from './member/member.module';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { AwsModule } from './common/aws/aws.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
-import { AttendanceModule } from './attendance/attendance.module';
-import { MakeUpLectureModule } from './make-up-lecture/make-up-lecture.module';
-import { MakeUpRegistrationModule } from './make-up-registration/make-up-registration.module';
 
 @Module({
   imports: [
@@ -52,10 +48,6 @@ import { MakeUpRegistrationModule } from './make-up-registration/make-up-registr
     InstructorModule,
     CustomerModule,
     LectureModule,
-    MemberModule,
-    AttendanceModule,
-    MakeUpLectureModule,
-    MakeUpRegistrationModule,
   ],
   controllers: [AppController],
   providers: [
