@@ -124,10 +124,6 @@ describe('UsersController', () => {
       const newUserDto = {
         email: 'new@daum.net',
         provider: 'kakao',
-        name: '홍길순',
-        profileImage: 'newImage.png',
-        phoneNumber: '010-9876-5432',
-        birth: '1995.09.13',
       };
 
       const newUser: Users = {
@@ -139,10 +135,6 @@ describe('UsersController', () => {
         instructor: [],
         customer: [],
         lecture: [],
-        member: [],
-        attendance: [],
-        makeUpLecture: [],
-        makeUpRegistration: [],
       };
 
       jest.spyOn(authService, 'validateUser').mockResolvedValue(undefined);

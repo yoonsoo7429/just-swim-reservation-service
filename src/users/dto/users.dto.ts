@@ -13,20 +13,4 @@ export class UsersDto {
   @IsNotEmpty()
   @IsString()
   readonly email: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly name: string;
-
-  @IsOptional()
-  @IsString()
-  readonly profileImage?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly birth: string;
-
-  @IsOptional()
-  @IsString()
-  readonly phoneNumber: string;
 }

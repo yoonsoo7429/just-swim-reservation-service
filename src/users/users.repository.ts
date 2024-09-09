@@ -21,16 +21,11 @@ export class UsersRepository {
 
   /* newUser 생성 */
   async createUser(newUserDto: UsersDto): Promise<Users> {
-    const { provider, email, name, profileImage, birth, phoneNumber } =
-      newUserDto;
+    const { provider, email } = newUserDto;
 
     const user = new Users();
     user.provider = provider;
     user.email = email;
-    user.name = name;
-    user.profileImage = profileImage;
-    user.birth = birth;
-    user.phoneNumber = phoneNumber;
     await this.usersRepository.save(user);
 
     return user;

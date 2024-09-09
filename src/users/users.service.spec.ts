@@ -16,19 +16,11 @@ export class MockUsersRepository {
     userType: UserType.Instructor,
     email: 'test@example.com',
     provider: 'kakao',
-    name: '홍길동',
-    birth: '1993.02.13',
-    phoneNumber: '010-1234-1234',
-    profileImage: 'profileImage.png',
     userCreatedAt: new Date(),
     userUpdatedAt: new Date(),
     instructor: [],
     customer: [],
     lecture: [],
-    member: [],
-    attendance: [],
-    makeUpLecture: [],
-    makeUpRegistration: [],
   };
 }
 
@@ -115,18 +107,11 @@ describe('UsersService', () => {
       const newUserDto: UsersDto = {
         email: 'new@example.com',
         provider: 'kakao',
-        name: '홍길순',
-        profileImage: 'prof.png',
-        phoneNumber: '010-1616-1616',
-        birth: '1995.09.13',
       };
       const newUser = new Users();
       newUser.userId = 2;
       newUser.email = newUserDto.email;
       newUser.provider = newUserDto.provider;
-      newUser.name = newUserDto.name;
-      newUser.profileImage = newUserDto.profileImage;
-      newUser.birth = newUserDto.birth;
       newUser.userCreatedAt = new Date();
       newUser.userUpdatedAt = new Date();
 

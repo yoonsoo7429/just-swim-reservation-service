@@ -41,16 +41,6 @@ export class UsersController {
     let profile: any = req.user;
     let provider: string = profile.provider;
     let email: string = profile._json.kakao_account.email;
-    let name: string = profile._json.kakao_account.name;
-    let profileImage: string = profile._json.properties.profile_image;
-    // user birth
-    let birthYear: string = profile._json.kakao_account.birthyear;
-    let birthDay: string = profile._json.kakao_account.birthday;
-    let birth: string = `${birthYear}.${birthDay.substring(0, 2)}.${birthDay.substring(2)}`;
-    // phoneNumber
-    let phone_number: string = profile._json.kakao_account.phone_number;
-    let cleanedNumber: string = phone_number.replace(/\D/g, '');
-    let phoneNumber: string = `010-${cleanedNumber.substring(4, 8)}-${cleanedNumber.substring(8, 13)}`;
 
     // user 확인
     const exUser = await this.authService.validateUser(email, provider);
@@ -63,10 +53,6 @@ export class UsersController {
       const newUserDto: UsersDto = {
         provider,
         email,
-        name,
-        profileImage,
-        birth,
-        phoneNumber,
       };
       const newUser = await this.usersService.createUser(newUserDto);
       const token = await this.authService.getToken(newUser.userId);
