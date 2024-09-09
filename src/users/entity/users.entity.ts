@@ -10,6 +10,7 @@ import { UserType } from '../enum/userType.enum';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { Instructor } from 'src/instructor/entity/instrutor.entity';
 import { Lecture } from 'src/lecture/entity/lecture.entity';
+import { Course } from 'src/course/entity/course.entity';
 
 @Entity('users')
 export class Users {
@@ -39,4 +40,7 @@ export class Users {
 
   @OneToMany(() => Lecture, (lecture) => lecture.user)
   lecture: Lecture[];
+
+  @OneToMany(() => Course, (course) => course.user)
+  course: Course[];
 }

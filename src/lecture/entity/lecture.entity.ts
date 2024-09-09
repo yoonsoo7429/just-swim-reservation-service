@@ -1,3 +1,4 @@
+import { Course } from 'src/course/entity/course.entity';
 import { Users } from 'src/users/entity/users.entity';
 import {
   Entity,
@@ -20,11 +21,12 @@ export class Lecture {
   @JoinColumn({ name: 'userId' })
   user: Users;
 
-  @Column({ type: 'varchar' })
-  lectureTitle: string;
+  @ManyToOne(() => Course, (course) => course.lecture)
+  @JoinColumn({ name: 'courseId' })
+  course: Course;
 
-  @Column({ type: 'mediumtext' })
-  lectureContent: string;
+  @Column({ type: 'varchar' })
+  lectureDate: string;
 
   @Column({ type: 'varchar' })
   lectureStartTime: string;
@@ -33,13 +35,7 @@ export class Lecture {
   lectureEndTime: string;
 
   @Column({ type: 'varchar' })
-  lectureDays: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  lectureQRCode: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  lectureEndDate: string;
+  lectureAttendee: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   lectureCreatedAt: Date;

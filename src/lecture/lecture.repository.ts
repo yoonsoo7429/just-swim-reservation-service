@@ -16,37 +16,18 @@ export class LectureRepository {
     lectureDto: LectureDto,
     userId: number,
   ): Promise<Lecture> {
-    const {
-      lectureTitle,
-      lectureContent,
-      lectureStartTime,
-      lectureEndTime,
-      lectureDays,
-      lectureEndDate,
-    } = lectureDto;
+    const { lectureDate, lectureStartTime, lectureEndTime, lectureAttendee } =
+      lectureDto;
 
     const lecture = new Lecture();
     lecture.user.userId = userId;
-    lecture.lectureTitle = lectureTitle;
-    lecture.lectureContent = lectureContent;
+    lecture.lectureDate = lectureDate;
     lecture.lectureStartTime = lectureStartTime;
     lecture.lectureEndTime = lectureEndTime;
-    lecture.lectureDays = lectureDays;
-    lecture.lectureEndDate = lectureEndDate;
+    lecture.lectureAttendee = lectureAttendee;
     await this.lectureRepository.save(lecture);
 
     return lecture;
-  }
-
-  /* QRCode 저장 */
-  async saveQRCode(
-    lectureId: number,
-    lectureQRCode: string,
-  ): Promise<UpdateResult> {
-    return await this.lectureRepository.update(
-      { lectureId },
-      { lectureQRCode },
-    );
   }
 
   /* 전체 강의 조회 (instructor) */
@@ -61,7 +42,7 @@ export class LectureRepository {
   async findLectureDetail(lectureId: number): Promise<Lecture> {
     return await this.lectureRepository.findOne({
       where: { lectureId, lectureDeletedAt: null },
-      relations: ['user', 'member', 'attendance'],
+      relations: ['user'],
     });
   }
 
@@ -79,22 +60,5 @@ export class LectureRepository {
       { lectureId },
       { lectureDeletedAt: new Date() },
     );
-  }
-
-  /* 겹치는 강습 확인 */
-  async findLectureWithTimeConflict(
-    userId: number,
-    lectureDays: string,
-    lectureStartTime: string,
-    lectureEndTime: string,
-  ): Promise<Lecture> {
-    return await this.lectureRepository.findOne({
-      where: {
-        user: { userId },
-        lectureDays,
-        lectureStartTime: LessThan(lectureStartTime),
-        lectureEndTime: MoreThan(lectureEndTime),
-      },
-    });
   }
 }

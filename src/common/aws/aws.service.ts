@@ -53,22 +53,4 @@ export class AwsService {
 
     await this.s3Client.send(command);
   }
-
-  /* qrcode 저장 */
-  async uploadQRCodeToS3(lectureId: number, qrCodeData: string) {
-    const buffer = Buffer.from(qrCodeData.split(',')[1], 'base64');
-    const fileName = `qrcodes/${lectureId}.png`;
-
-    const command = new PutObjectCommand({
-      Bucket: this.configService.get<string>('AWS_S3_BUCKET_NAME'),
-      Key: fileName, // 업로드될 파일의 이름
-      Body: buffer, // 업로드할 파일
-      ACL: 'public-read', // 파일 접근 권한
-      ContentType: 'image/png', // 파일 타입/확장자
-    });
-
-    await this.s3Client.send(command);
-
-    return `https://${this.configService.get<string>('AWS_S3_BUCKET_NAME')}.s3.${this.configService.get<string>('AWS_REGION')}.amazonaws.com/${fileName}`;
-  }
 }

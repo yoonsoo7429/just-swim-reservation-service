@@ -19,6 +19,7 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { AwsModule } from './common/aws/aws.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
+import { CourseModule } from './course/course.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { HttpExceptionFilter } from './common/response/http-exception.filter';
     InstructorModule,
     CustomerModule,
     LectureModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [

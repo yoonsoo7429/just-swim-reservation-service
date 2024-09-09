@@ -23,44 +23,10 @@ export class LectureService {
     lectureDto: LectureDto,
     userId: number,
   ): Promise<Lecture> {
-    // 동일한 시간대 확인
-    const { lectureDays, lectureStartTime, lectureEndTime } = lectureDto;
-
-    const existingLecture =
-      await this.lectureRespository.findLectureWithTimeConflict(
-        userId,
-        lectureDays,
-        lectureStartTime,
-        lectureEndTime,
-      );
-
-    if (existingLecture) {
-      throw new ConflictException('동일한 시간 대에 강의가 존재합니다.');
-    }
-
     const newLecture = await this.lectureRespository.createLecture(
       lectureDto,
       userId,
     );
-
-    // QR 생성
-    const qrCodeData = await QRCode.toDataURL(
-      `${process.env.SERVER_QR_CHECK_URI}?lectureId=${newLecture.lectureId}`,
-    );
-    const lectureQRCode = await this.awsService.uploadQRCodeToS3(
-      newLecture.lectureId,
-      qrCodeData,
-    );
-
-    const result = await this.lectureRespository.saveQRCode(
-      newLecture.lectureId,
-      lectureQRCode,
-    );
-    if (result.affected === 0) {
-      throw new InternalServerErrorException(
-        '강의 생성 중 qrcode 생성에 실패했습니다.',
-      );
-    }
 
     return newLecture;
   }
