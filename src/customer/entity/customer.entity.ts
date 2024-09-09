@@ -14,16 +14,34 @@ export class Customer {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   customerId: number;
 
+  @ManyToOne(() => Users, (user) => user.customer)
+  @JoinColumn({ name: 'userId' })
+  user: Users;
+
+  @Column({ type: 'varchar' })
+  customerName: string;
+
   @Column({ type: 'varchar', nullable: true })
-  customerNickname: string;
+  customerProfileImage: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  customerEnrollment: string;
+
+  @Column({ type: 'varchar' })
+  customerBirth: string;
+
+  @Column({ type: 'varchar' })
+  customerPhoneNumber: string;
+
+  @Column({ type: 'varchar' })
+  customerGender: string;
+
+  @Column({ type: 'varchar' })
+  customerAddress: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   customerCreatedAt: Date;
 
   @UpdateDateColumn({ type: 'timestamp' })
   customerUpdatedAt: Date;
-
-  @ManyToOne(() => Users, (user) => user.customer)
-  @JoinColumn({ name: 'userId' })
-  user: Users;
 }

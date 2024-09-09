@@ -8,7 +8,13 @@ export class MockCustomerRepository {
   readonly mockCustomer: Customer = {
     customerId: 1,
     user: new Users(),
-    customerNickname: null,
+    customerName: '홍길동',
+    customerProfileImage: null,
+    customerEnrollment: null,
+    customerBirth: '1995.09.13',
+    customerPhoneNumber: '010-1234-1234',
+    customerGender: '남자',
+    customerAddress: '경기도 고양시 일산동구',
     customerCreatedAt: new Date(),
     customerUpdatedAt: new Date(),
   };
