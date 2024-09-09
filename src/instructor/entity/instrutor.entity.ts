@@ -18,29 +18,20 @@ export class Instructor {
   @JoinColumn({ name: 'userId' })
   user: Users;
 
-  @Column({ type: 'varchar', nullable: true })
-  workingLocation: string;
+  @Column({ type: 'varchar' })
+  instructorName: string;
+
+  @Column({ type: 'varchar' })
+  instructorPhoneNumber: string;
 
   @Column({ type: 'varchar', nullable: true })
-  career: string;
+  instructorCareer: string;
 
   @Column({ type: 'varchar', nullable: true })
-  history: string;
+  instructorProfileImage: string;
 
   @Column({ type: 'varchar', nullable: true })
-  introduction: string;
-
-  @Column({ type: 'mediumtext', nullable: true })
-  curriculum: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  youtubeLink: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  instagramLink: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  facebookLink: string;
+  instructorCourse: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   instructorCreatedAt: Date;
