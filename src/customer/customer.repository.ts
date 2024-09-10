@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Customer } from './entity/customer.entity';
 import { Repository } from 'typeorm';
+import { CustomerDto } from './dto/customer.dto';
 
 @Injectable()
 export class CustomerRepository {
@@ -11,9 +12,29 @@ export class CustomerRepository {
   ) {}
 
   /* userType이 customer로 지정 */
-  async createCustomer(userId: number): Promise<Customer> {
+  async createCustomer(
+    userId: number,
+    customerDto: CustomerDto,
+  ): Promise<Customer> {
+    const {
+      customerName,
+      customerProfileImage,
+      customerEnrollment,
+      customerBirth,
+      customerPhoneNumber,
+      customerGender,
+      customerAddress,
+    } = customerDto;
+
     const customer = new Customer();
     customer.user.userId = userId;
+    customer.customerName = customerName;
+    customer.customerProfileImage = customerProfileImage;
+    customer.customerEnrollment = customerEnrollment;
+    customer.customerBirth = customerBirth;
+    customer.customerPhoneNumber = customerPhoneNumber;
+    customer.customerGender = customerGender;
+    customer.customerAddress = customerAddress;
     await this.customerRepository.save(customer);
 
     return customer;

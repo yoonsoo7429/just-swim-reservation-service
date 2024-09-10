@@ -9,12 +9,7 @@ import { CustomerModule } from 'src/customer/customer.module';
 import { InstructorModule } from 'src/instructor/instructor.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Users]),
-    forwardRef(() => AuthModule),
-    forwardRef(() => CustomerModule),
-    forwardRef(() => InstructorModule),
-  ],
+  imports: [TypeOrmModule.forFeature([Users]), forwardRef(() => AuthModule)],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersService, UsersRepository],

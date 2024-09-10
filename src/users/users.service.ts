@@ -8,16 +8,10 @@ import { Users } from './entity/users.entity';
 import { UsersDto } from './dto/users.dto';
 import { UserType } from './enum/userType.enum';
 import { UpdateResult } from 'typeorm';
-import { CustomerRepository } from 'src/customer/customer.repository';
-import { InstructorRepository } from 'src/instructor/instructor.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UsersRepository,
-    private readonly customerRepository: CustomerRepository,
-    private readonly instructorRepository: InstructorRepository,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   /* email, provider를 이용해서 user 조회 */
   async findUserByEmail(
@@ -53,14 +47,6 @@ export class UsersService {
     );
     if (UpdateResult.affected === 0) {
       throw new InternalServerErrorException('타입 지정 실패');
-    }
-
-    // userType update 완료되면 계정에 맞춰 생성
-    if (userType === UserType.Customer) {
-      await this.customerRepository.createCustomer(userId);
-    }
-    if (userType === UserType.Instructor) {
-      await this.instructorRepository.createInstructor(userId);
     }
 
     return UpdateResult;

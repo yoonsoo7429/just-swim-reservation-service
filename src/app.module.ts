@@ -61,30 +61,14 @@ import { CourseModule } from './course/course.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes(
+      // Customer
+      { path: 'cusotmer', method: RequestMethod.POST },
       // Lecture
       { path: 'lecture', method: RequestMethod.POST },
       { path: 'lecture/schedule', method: RequestMethod.GET },
       { path: 'lecture/:lectureId', method: RequestMethod.GET },
       { path: 'lecture/:lectureId', method: RequestMethod.PUT },
       { path: 'lecture/:lectureId', method: RequestMethod.DELETE },
-      // Attendacne
-      { path: 'attendance', method: RequestMethod.POST },
-      { path: 'attendance', method: RequestMethod.DELETE },
-      // Member
-      { path: 'member/:lectureId', method: RequestMethod.GET },
-      // MakeUpLecture
-      { path: 'makeUpLecture', method: RequestMethod.POST },
-      { path: 'makeUpLecture/:lectureId', method: RequestMethod.GET },
-      { path: 'makeUpLecture/:lectureId', method: RequestMethod.DELETE },
-      // MakeUpRegistration
-      {
-        path: 'makeUpRegistration/:makeUpLectureId',
-        method: RequestMethod.POST,
-      },
-      {
-        path: 'makeUpRegistration/:makeUpLectureId',
-        method: RequestMethod.DELETE,
-      },
     );
   }
 }
