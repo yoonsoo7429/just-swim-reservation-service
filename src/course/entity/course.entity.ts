@@ -25,7 +25,10 @@ export class Course {
   courseDays: string;
 
   @Column({ type: 'varchar' })
-  courseTime: string;
+  courseStartTime: string;
+
+  @Column({ type: 'varchar' })
+  courseEndTime: string;
 
   @Column({ type: 'int' })
   courseCapacity: number;

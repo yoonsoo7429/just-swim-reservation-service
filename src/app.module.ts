@@ -65,6 +65,8 @@ export class AppModule implements NestModule {
       { path: 'customer', method: RequestMethod.POST },
       // Instructor
       { path: 'instructor', method: RequestMethod.POST },
+      // Course
+      { path: 'course', method: RequestMethod.POST },
       // Lecture
       { path: 'lecture', method: RequestMethod.POST },
       { path: 'lecture/schedule', method: RequestMethod.GET },
