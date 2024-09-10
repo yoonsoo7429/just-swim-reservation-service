@@ -11,7 +11,7 @@ export class CustomerRepository {
     private customerRepository: Repository<Customer>,
   ) {}
 
-  /* userType이 customer로 지정 */
+  /* customer 생성 */
   async createCustomer(
     userId: number,
     customerDto: CustomerDto,

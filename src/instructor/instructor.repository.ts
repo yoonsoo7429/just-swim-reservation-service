@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Instructor } from './entity/instrutor.entity';
 import { Repository } from 'typeorm';
+import { InstructorDto } from './dto/instructor.dto';
 
 @Injectable()
 export class InstructorRepository {
@@ -10,10 +11,26 @@ export class InstructorRepository {
     private instructorRepository: Repository<Instructor>,
   ) {}
 
-  /* userType이 customer로 지정 */
-  async createInstructor(userId: number): Promise<Instructor> {
+  /* instructor 생성 */
+  async createInstructor(
+    userId: number,
+    instructorDto: InstructorDto,
+  ): Promise<Instructor> {
+    const {
+      instructorName,
+      instructorProfileImage,
+      instructorCareer,
+      instructorPhoneNumber,
+      instructorCourse,
+    } = instructorDto;
+
     const instructor = new Instructor();
     instructor.user.userId = userId;
+    instructor.instructorName = instructorName;
+    instructor.instructorProfileImage = instructorProfileImage;
+    instructor.instructorCareer = instructorCareer;
+    instructor.instructorPhoneNumber = instructorPhoneNumber;
+    instructor.instructorCourse = instructorCourse;
     await this.instructorRepository.save(instructor);
 
     return instructor;

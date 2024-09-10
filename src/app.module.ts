@@ -62,7 +62,9 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes(
       // Customer
-      { path: 'cusotmer', method: RequestMethod.POST },
+      { path: 'customer', method: RequestMethod.POST },
+      // Instructor
+      { path: 'instructor', method: RequestMethod.POST },
       // Lecture
       { path: 'lecture', method: RequestMethod.POST },
       { path: 'lecture/schedule', method: RequestMethod.GET },
