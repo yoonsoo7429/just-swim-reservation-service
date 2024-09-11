@@ -17,6 +17,7 @@ export class Lecture {
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   lectureId: number;
 
+  // customer의 userId
   @ManyToOne(() => Users, (user) => user.lecture)
   @JoinColumn({ name: 'userId' })
   user: Users;

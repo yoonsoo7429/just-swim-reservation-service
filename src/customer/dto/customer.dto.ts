@@ -9,10 +9,6 @@ export class CustomerDto {
   @IsString()
   readonly customerProfileImage?: string;
 
-  @IsOptional()
-  @IsString()
-  readonly customerEnrollment?: string;
-
   @IsNotEmpty()
   @IsString()
   readonly customerBirth: string;

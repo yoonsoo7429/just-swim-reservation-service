@@ -13,6 +13,7 @@ import { LectureDto } from './dto/lecture.dto';
 import { Response } from 'express';
 import { ResponseService } from 'src/common/response/response.service';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 @Controller('lecture')
 export class LectureController {
@@ -26,7 +27,7 @@ export class LectureController {
   async createLecture(@Body() lectureDto: LectureDto, @Res() res: Response) {
     const { userId, userType } = res.locals.user;
 
-    if (userType !== 'instructor') {
+    if (userType !== UserType.Instructor) {
       this.responseService.unauthorized(res, '강의 생성 권한이 없습니다.');
     }
 

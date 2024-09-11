@@ -11,6 +11,7 @@ import { Customer } from 'src/customer/entity/customer.entity';
 import { Instructor } from 'src/instructor/entity/instrutor.entity';
 import { Lecture } from 'src/lecture/entity/lecture.entity';
 import { Course } from 'src/course/entity/course.entity';
+import { Member } from 'src/member/entity/member.entity';
 
 @Entity('users')
 export class Users {
@@ -43,4 +44,7 @@ export class Users {
 
   @OneToMany(() => Course, (course) => course.user)
   course: Course[];
+
+  @OneToMany(() => Member, (member) => member.user)
+  member: Member[];
 }

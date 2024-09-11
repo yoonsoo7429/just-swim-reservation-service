@@ -21,7 +21,6 @@ export class InstructorRepository {
       instructorProfileImage,
       instructorCareer,
       instructorPhoneNumber,
-      instructorCourse,
     } = instructorDto;
 
     const instructor = new Instructor();
@@ -30,7 +29,6 @@ export class InstructorRepository {
     instructor.instructorProfileImage = instructorProfileImage;
     instructor.instructorCareer = instructorCareer;
     instructor.instructorPhoneNumber = instructorPhoneNumber;
-    instructor.instructorCourse = instructorCourse;
     await this.instructorRepository.save(instructor);
 
     return instructor;

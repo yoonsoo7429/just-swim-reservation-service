@@ -24,9 +24,6 @@ export class Customer {
   @Column({ type: 'varchar', nullable: true })
   customerProfileImage: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  customerEnrollment: string;
-
   @Column({ type: 'varchar' })
   customerBirth: string;
 

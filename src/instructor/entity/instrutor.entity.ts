@@ -30,9 +30,6 @@ export class Instructor {
   @Column({ type: 'varchar', nullable: true })
   instructorProfileImage: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  instructorCourse: string;
-
   @CreateDateColumn({ type: 'timestamp' })
   instructorCreatedAt: Date;
 

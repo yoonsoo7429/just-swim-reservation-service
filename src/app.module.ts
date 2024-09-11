@@ -21,6 +21,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
 import { CourseModule } from './course/course.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CustomerModule,
     LectureModule,
     CourseModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [
@@ -76,6 +78,8 @@ export class AppModule implements NestModule {
       { path: 'lecture/:lectureId', method: RequestMethod.GET },
       { path: 'lecture/:lectureId', method: RequestMethod.PUT },
       { path: 'lecture/:lectureId', method: RequestMethod.DELETE },
+      // Member
+      { path: 'member', method: RequestMethod.POST },
     );
   }
 }

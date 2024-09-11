@@ -16,8 +16,4 @@ export class InstructorDto {
   @IsOptional()
   @IsString()
   readonly instructorProfileImage?: string;
-
-  @IsOptional()
-  @IsString()
-  readonly instructorCourse?: string;
 }

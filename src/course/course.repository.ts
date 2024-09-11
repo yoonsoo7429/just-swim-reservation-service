@@ -25,4 +25,9 @@ export class CourseRepository {
 
     return course;
   }
+
+  /* 강좌 상세 정보 */
+  async findCourseDetail(courseId: number): Promise<Course> {
+    return await this.courseRepository.findOne({ where: { courseId } });
+  }
 }

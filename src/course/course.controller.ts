@@ -3,7 +3,7 @@ import { CourseService } from './course.service';
 import { CourseDto } from './dto/course.dto';
 import { Response } from 'express';
 import { ResponseService } from 'src/common/response/response.service';
-import { UserType } from 'src/users/enum/userType.enum';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 @Controller('course')
 export class CourseController {

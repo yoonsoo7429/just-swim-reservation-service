@@ -1,4 +1,5 @@
 import { Lecture } from 'src/lecture/entity/lecture.entity';
+import { Member } from 'src/member/entity/member.entity';
 import { Users } from 'src/users/entity/users.entity';
 import {
   Column,
@@ -44,4 +45,7 @@ export class Course {
 
   @OneToMany(() => Lecture, (lecture) => lecture.course)
   lecture: Lecture[];
+
+  @OneToMany(() => Member, (member) => member.course)
+  member: Member[];
 }

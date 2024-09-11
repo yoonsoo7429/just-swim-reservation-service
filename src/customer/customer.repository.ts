@@ -19,7 +19,6 @@ export class CustomerRepository {
     const {
       customerName,
       customerProfileImage,
-      customerEnrollment,
       customerBirth,
       customerPhoneNumber,
       customerGender,
@@ -30,7 +29,6 @@ export class CustomerRepository {
     customer.user.userId = userId;
     customer.customerName = customerName;
     customer.customerProfileImage = customerProfileImage;
-    customer.customerEnrollment = customerEnrollment;
     customer.customerBirth = customerBirth;
     customer.customerPhoneNumber = customerPhoneNumber;
     customer.customerGender = customerGender;
