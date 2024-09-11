@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entity/users.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { UsersDto } from './dto/users.dto';
-import { UserType } from './enum/userType.enum';
+import { UserType } from './enum/user-type.enum';
 
 @Injectable()
 export class UsersRepository {

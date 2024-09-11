@@ -6,7 +6,7 @@ import { KakaoAuthGuard } from 'src/auth/guard/kakao.guard';
 import { Request, Response } from 'express';
 import { MockUsersRepository } from './users.service.spec';
 import { Users } from './entity/users.entity';
-import { UserType } from './enum/userType.enum';
+import { UserType } from './enum/user-type.enum';
 import { ResponseService } from 'src/common/response/response.service';
 
 class MockKakaoAuthGuard {

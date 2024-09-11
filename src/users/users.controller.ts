@@ -14,7 +14,7 @@ import { Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
 import { UsersDto } from './dto/users.dto';
 import { ResponseService } from 'src/common/response/response.service';
-import { UserType } from './enum/userType.enum';
+import { UserType } from './enum/user-type.enum';
 
 @Controller()
 export class UsersController {

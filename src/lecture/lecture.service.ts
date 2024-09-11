@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -7,16 +6,11 @@ import {
 import { LectureRepository } from './lecture.repository';
 import { LectureDto } from './dto/lecture.dto';
 import { Lecture } from './entity/lecture.entity';
-import * as QRCode from 'qrcode';
-import { AwsService } from 'src/common/aws/aws.service';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
 
 @Injectable()
 export class LectureService {
-  constructor(
-    private readonly awsService: AwsService,
-    private readonly lectureRespository: LectureRepository,
-  ) {}
+  constructor(private readonly lectureRespository: LectureRepository) {}
 
   /* lecture 생성 */
   async createLecture(

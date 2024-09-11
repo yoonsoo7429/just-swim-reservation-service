@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserType } from '../enum/userType.enum';
+import { UserType } from '../enum/user-type.enum';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { Instructor } from 'src/instructor/entity/instrutor.entity';
 import { Lecture } from 'src/lecture/entity/lecture.entity';

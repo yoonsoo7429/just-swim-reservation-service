@@ -20,6 +20,7 @@ import { AwsModule } from './common/aws/aws.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './common/response/http-exception.filter';
 import { CourseModule } from './course/course.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { CourseModule } from './course/course.module';
       }),
       inject: [ConfigService],
     }),
+    // schedule 설정
+    ScheduleModule.forRoot(),
     ResponseModule,
     AwsModule,
     UsersModule,

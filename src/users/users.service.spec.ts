@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { Users } from './entity/users.entity';
-import { UserType } from './enum/userType.enum';
+import { UserType } from './enum/user-type.enum';
 import { UsersDto } from './dto/users.dto';
 import { CustomerRepository } from 'src/customer/customer.repository';
 import { InstructorRepository } from 'src/instructor/instructor.repository';

@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { UserType } from '../enum/userType.enum';
+import { UserType } from '../enum/user-type.enum';
 
 export class UsersDto {
   @IsNotEmpty()
