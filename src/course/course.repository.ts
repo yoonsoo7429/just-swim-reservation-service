@@ -30,4 +30,11 @@ export class CourseRepository {
   async findCourseDetail(courseId: number): Promise<Course> {
     return await this.courseRepository.findOne({ where: { courseId } });
   }
+
+  /* 모든 강좌 조회 */
+  async findAllCourses(): Promise<Course[]> {
+    return await this.courseRepository.find({
+      where: { courseDeletedAt: null },
+    });
+  }
 }
