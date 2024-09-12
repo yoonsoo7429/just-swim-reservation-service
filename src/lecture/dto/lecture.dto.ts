@@ -12,8 +12,4 @@ export class LectureDto {
   @IsNotEmpty()
   @IsString()
   readonly lectureEndTime: string;
-
-  @IsOptional()
-  @IsString()
-  readonly lectureAttendee?: string;
 }

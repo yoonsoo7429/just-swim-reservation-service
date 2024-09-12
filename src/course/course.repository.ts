@@ -28,7 +28,10 @@ export class CourseRepository {
 
   /* 강좌 상세 정보 */
   async findCourseDetail(courseId: number): Promise<Course> {
-    return await this.courseRepository.findOne({ where: { courseId } });
+    return await this.courseRepository.findOne({
+      where: { courseId },
+      relations: ['user', 'member'],
+    });
   }
 
   /* 모든 강좌 조회 */

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from './entity/lecture.entity';
-import { LessThan, MoreThan, Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/updateLecture.dto';
 
@@ -16,15 +16,13 @@ export class LectureRepository {
     lectureDto: LectureDto,
     userId: number,
   ): Promise<Lecture> {
-    const { lectureDate, lectureStartTime, lectureEndTime, lectureAttendee } =
-      lectureDto;
+    const { lectureDate, lectureStartTime, lectureEndTime } = lectureDto;
 
     const lecture = new Lecture();
     lecture.user.userId = userId;
     lecture.lectureDate = lectureDate;
     lecture.lectureStartTime = lectureStartTime;
     lecture.lectureEndTime = lectureEndTime;
-    lecture.lectureAttendee = lectureAttendee;
     await this.lectureRepository.save(lecture);
 
     return lecture;

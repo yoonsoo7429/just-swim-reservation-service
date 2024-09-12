@@ -9,7 +9,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
 } from 'typeorm';
 
 @Entity('lecture')
@@ -34,9 +33,6 @@ export class Lecture {
 
   @Column({ type: 'varchar' })
   lectureEndTime: string;
-
-  @Column({ type: 'varchar' })
-  lectureAttendee: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   lectureCreatedAt: Date;

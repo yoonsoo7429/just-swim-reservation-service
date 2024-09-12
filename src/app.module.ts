@@ -25,6 +25,7 @@ import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
+    // config 설정
     ConfigModule.forRoot({
       isGlobal: true,
     }),
