@@ -7,15 +7,15 @@ import {
 import { MemberRepository } from './member.repository';
 import { MemberDto } from './dto/member.dto';
 import { Member } from './entity/member.entity';
-import { CourseRepository } from 'src/course/course.repository';
-import { LectureRepository } from 'src/lecture/lecture.repository';
+import { CourseService } from 'src/course/course.service';
+import { LectureService } from 'src/lecture/lecture.service';
 
 @Injectable()
 export class MemberService {
   constructor(
     private readonly memberRepository: MemberRepository,
-    private readonly courseRepository: CourseRepository,
-    private readonly lectureRepository: LectureRepository,
+    private readonly courseService: CourseService,
+    private readonly lectureService: LectureService,
   ) {}
 
   /* instructor의 권한으로 customer를 member로 등록 */
@@ -25,7 +25,7 @@ export class MemberService {
     memberDto: MemberDto,
   ): Promise<Member> {
     // course 정보를 통해 권한 확인
-    const course = await this.courseRepository.findCourseDetail(courseId);
+    const course = await this.courseService.findCourseDetail(courseId, userId);
 
     // course가 있는지 확인
     if (!course) {
@@ -44,6 +44,18 @@ export class MemberService {
     const member = await this.memberRepository.createMember(memberDto);
 
     // member를 등록하면 lecture도 오늘 날짜 이후로 생성함
+    const memberUserId = member.user.userId;
+    const lectureDays = course.courseDays;
+    const lectureStartTime = course.courseStartTime;
+    const lectureEndTime = course.courseEndTime;
+
+    await this.lectureService.createLecturesForNewMember(
+      courseId,
+      memberUserId,
+      lectureDays,
+      lectureStartTime,
+      lectureEndTime,
+    );
 
     return member;
   }

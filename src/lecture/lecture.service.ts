@@ -1,88 +1,47 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { LectureRepository } from './lecture.repository';
-import { LectureDto } from './dto/lecture.dto';
-import { Lecture } from './entity/lecture.entity';
-import { UpdateLectureDto } from './dto/updateLecture.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class LectureService {
-  constructor(private readonly lectureRespository: LectureRepository) {}
+  constructor(private readonly lectureRepository: LectureRepository) {}
 
-  /* lecture 생성 */
-  async createLecture(
-    lectureDto: LectureDto,
+  /* instructor가 customer를 member로 등록과 동시에 오늘 날짜 이후로 lecture 생성 */
+  async createLecturesForNewMember(
+    courseId: number,
     userId: number,
-  ): Promise<Lecture> {
-    const newLecture = await this.lectureRespository.createLecture(
-      lectureDto,
-      userId,
-    );
+    lectureDays: string,
+    lectureStartTime: string,
+    lectureEndTime: string,
+  ) {
+    // 오늘 날짜를 기준으로 이번달 lecture에 들어갈 lectureDate를 계산
+    // 오늘 날짜 가져오기
+    const today = moment();
+    // lectureDays를 배열로 분리
+    const daysOfWeek = lectureDays.split(',');
 
-    return newLecture;
-  }
+    // 현재 달의 모든 날짜 중에서 강의 날짜 필터링
+    const lecturesToCreate = [];
 
-  /* 전체 강의 조회 */
-  async findAllLecturesForSchedule(
-    userId: number,
-    userType: string,
-  ): Promise<Lecture[]> {
-    if (userType === 'instructor') {
-      return await this.lectureRespository.findAllLecturesByInstructor(userId);
-    }
-  }
+    for (let i = 0; i < 30; i++) {
+      const date = today.clone().add(i, 'days');
+      const dayName = date.format('dddd');
 
-  /* 강의 상세 조회 */
-  async findLectureDetail(userId: number, lectureId: number): Promise<Lecture> {
-    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
-    // 강사 권한 확인
-    if (lecture.user.userId === userId) {
-      return lecture;
-    }
-
-    throw new UnauthorizedException('강의 상세 조회 권한이 없습니다.');
-  }
-
-  /* 강의 수정 */
-  async updateLecture(
-    userId: number,
-    lectureId: number,
-    updateLectureDto: UpdateLectureDto,
-  ): Promise<void> {
-    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
-    // 권한 확인
-    if (lecture.user.userId !== userId) {
-      throw new UnauthorizedException('강의 수정 권한이 없습니다.');
+      if (daysOfWeek.includes(dayName) && date.isAfter(today)) {
+        lecturesToCreate.push({
+          lectureDate: date.format('YYYY-MM-DD'),
+          lectureStartTime,
+          lectureEndTime,
+          user: { userId },
+          course: { courseId },
+        });
+      }
     }
 
-    // 강의 수정
-    const updateResult = await this.lectureRespository.updateLecture(
-      lectureId,
-      updateLectureDto,
-    );
+    // LectureRepository에서 강의 생성
+    const lectures =
+      await this.lectureRepository.createLecturesForNewMember(lecturesToCreate);
 
-    if (updateResult.affected === 0) {
-      throw new InternalServerErrorException('강의 수정 실패');
-    }
-  }
-
-  /* 강의 삭제 (softDelete) */
-  async softDeleteLecture(userId: number, lectureId: number): Promise<void> {
-    const lecture = await this.lectureRespository.findLectureDetail(lectureId);
-    // 권한 확인
-    if (lecture.user.userId !== userId) {
-      throw new UnauthorizedException('강의 삭제 권한이 없습니다.');
-    }
-
-    // 강의 삭제
-    const softDeleteResult =
-      await this.lectureRespository.softDeleteLecture(lectureId);
-
-    if (softDeleteResult.affected === 0) {
-      throw new InternalServerErrorException('강의 삭제 실패');
-    }
+    return lectures;
   }
 }
