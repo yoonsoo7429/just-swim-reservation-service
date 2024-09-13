@@ -25,14 +25,15 @@ export class CustomerRepository {
       customerAddress,
     } = customerDto;
 
-    const customer = new Customer();
-    customer.user.userId = userId;
-    customer.customerName = customerName;
-    customer.customerProfileImage = customerProfileImage;
-    customer.customerBirth = customerBirth;
-    customer.customerPhoneNumber = customerPhoneNumber;
-    customer.customerGender = customerGender;
-    customer.customerAddress = customerAddress;
+    const customer = this.customerRepository.create({
+      customerName,
+      customerProfileImage,
+      customerBirth,
+      customerPhoneNumber,
+      customerGender,
+      customerAddress,
+      user: { userId },
+    });
     await this.customerRepository.save(customer);
 
     return customer;

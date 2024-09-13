@@ -15,12 +15,13 @@ export class CourseRepository {
     const { courseDays, courseStartTime, courseEndTime, courseCapacity } =
       courseDto;
 
-    const course = new Course();
-    course.user.userId = userId;
-    course.courseDays = courseDays;
-    course.courseStartTime = courseStartTime;
-    course.courseEndTime = courseEndTime;
-    course.courseCapacity = courseCapacity;
+    const course = this.courseRepository.create({
+      courseDays,
+      courseStartTime,
+      courseEndTime,
+      courseCapacity,
+      user: { userId },
+    });
     await this.courseRepository.save(course);
 
     return course;

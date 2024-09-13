@@ -23,9 +23,7 @@ export class UsersRepository {
   async createUser(newUserDto: UsersDto): Promise<Users> {
     const { provider, email } = newUserDto;
 
-    const user = new Users();
-    user.provider = provider;
-    user.email = email;
+    const user = this.usersRepository.create({ provider, email });
     await this.usersRepository.save(user);
 
     return user;

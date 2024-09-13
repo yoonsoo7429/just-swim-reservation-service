@@ -14,9 +14,10 @@ export class MemberRepository {
   async createMember(memberDto: MemberDto): Promise<Member> {
     const { userId, courseId } = memberDto;
 
-    const member = new Member();
-    member.user.userId = userId;
-    member.course.courseId = courseId;
+    const member = this.memberRepository.create({
+      user: { userId },
+      course: { courseId },
+    });
     await this.memberRepository.save(member);
 
     return member;

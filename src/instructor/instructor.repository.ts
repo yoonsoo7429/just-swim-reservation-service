@@ -23,12 +23,13 @@ export class InstructorRepository {
       instructorPhoneNumber,
     } = instructorDto;
 
-    const instructor = new Instructor();
-    instructor.user.userId = userId;
-    instructor.instructorName = instructorName;
-    instructor.instructorProfileImage = instructorProfileImage;
-    instructor.instructorCareer = instructorCareer;
-    instructor.instructorPhoneNumber = instructorPhoneNumber;
+    const instructor = this.instructorRepository.create({
+      instructorName,
+      instructorProfileImage,
+      instructorCareer,
+      instructorPhoneNumber,
+      user: { userId },
+    });
     await this.instructorRepository.save(instructor);
 
     return instructor;
