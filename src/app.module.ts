@@ -83,6 +83,7 @@ export class AppModule implements NestModule {
       { path: 'lecture/:lectureId', method: RequestMethod.DELETE },
       // Member
       { path: 'member', method: RequestMethod.POST },
+      { path: 'member/:memberId', method: RequestMethod.DELETE },
     );
   }
 }

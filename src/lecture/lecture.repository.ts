@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from './entity/lecture.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class LectureRepository {
@@ -18,5 +18,16 @@ export class LectureRepository {
     );
 
     return await this.lectureRepository.save(lectures);
+  }
+
+  /* member 등록 취소에 맞춰 강의 삭제 */
+  async deleteLecturesForMember(
+    courseId: number,
+    userId: number,
+  ): Promise<DeleteResult> {
+    return await this.lectureRepository.delete({
+      course: { courseId },
+      user: { userId },
+    });
   }
 }

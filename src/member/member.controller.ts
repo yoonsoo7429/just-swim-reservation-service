@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Res } from '@nestjs/common';
 import { MemberService } from './member.service';
 import { MemberDto } from './dto/member.dto';
 import { Response } from 'express';
@@ -29,5 +29,25 @@ export class MemberController {
     );
 
     this.responseService.success(res, '수강생 등록 성공', member);
+  }
+
+  /* instructor가 수강생 등록 취소 */
+  @Delete(':memberId')
+  async deleteMember(
+    @Param('memberId') memberId: number,
+    @Res() res: Response,
+  ) {
+    const { userId, userType } = res.locals.user;
+
+    if (userType !== UserType.Instructor) {
+      this.responseService.unauthorized(
+        res,
+        '수강생 등록 취소 권한이 없습니다.',
+      );
+    }
+
+    await this.memberService.deleteMember(memberId, userId);
+
+    this.responseService.success(res, '수강생 등록 취소');
   }
 }

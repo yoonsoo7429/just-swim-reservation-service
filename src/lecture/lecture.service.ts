@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { LectureRepository } from './lecture.repository';
 import * as moment from 'moment';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class LectureService {
@@ -43,5 +44,22 @@ export class LectureService {
       await this.lectureRepository.createLecturesForNewMember(lecturesToCreate);
 
     return lectures;
+  }
+
+  /* instructor의 수강생 등록 취소에 맞춰 강의 삭제 */
+  async deleteLecturesForMember(
+    courseId: number,
+    userId: number,
+  ): Promise<DeleteResult> {
+    const deleteResult = await this.lectureRepository.deleteLecturesForMember(
+      courseId,
+      userId,
+    );
+
+    if (deleteResult.affected === 0) {
+      throw new InternalServerErrorException('강의 삭제를 실패했습니다.');
+    }
+
+    return deleteResult;
   }
 }

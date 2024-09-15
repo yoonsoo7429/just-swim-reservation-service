@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import { MemberDto } from './dto/member.dto';
 import { Member } from './entity/member.entity';
 import { CourseService } from 'src/course/course.service';
 import { LectureService } from 'src/lecture/lecture.service';
+import { DeleteResult } from 'typeorm';
 
 @Injectable()
 export class MemberService {
@@ -58,5 +60,31 @@ export class MemberService {
     );
 
     return member;
+  }
+
+  /* instructor가 수강생 등록 취소 */
+  async deleteMember(memberId: number, userId: number): Promise<DeleteResult> {
+    const member = await this.memberRepository.findMemberDetail(memberId);
+
+    if (!member) {
+      throw new NotFoundException('수강생 정보를 찾을 수 없습니다.');
+    }
+    const instructorUserId = member.course.user.userId;
+    if (instructorUserId !== userId) {
+      throw new UnauthorizedException('수강생 등록 취소 권한이 없습니다.');
+    }
+
+    const deleteResult = await this.memberRepository.deleteMember(memberId);
+    if (deleteResult.affected === 0) {
+      throw new InternalServerErrorException(
+        '수강생 등록 취소를 실패했습니다.',
+      );
+    }
+
+    const courseId = member.course.courseId;
+    const customerUserId = member.user.userId;
+    await this.lectureService.deleteLecturesForMember(courseId, customerUserId);
+
+    return deleteResult;
   }
 }
