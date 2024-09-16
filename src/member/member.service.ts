@@ -51,7 +51,7 @@ export class MemberService {
     const lectureStartTime = course.courseStartTime;
     const lectureEndTime = course.courseEndTime;
 
-    await this.lectureService.createLecturesForNewMember(
+    await this.lectureService.createLecturesForMember(
       courseId,
       memberUserId,
       lectureDays,
@@ -86,5 +86,10 @@ export class MemberService {
     await this.lectureService.deleteLecturesForMember(courseId, customerUserId);
 
     return deleteResult;
+  }
+
+  /* 모든 member 조회 */
+  async findAllMembers(): Promise<Member[]> {
+    return await this.memberRepository.findAllMembers();
   }
 }

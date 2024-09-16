@@ -35,4 +35,9 @@ export class MemberRepository {
   async deleteMember(memberId: number): Promise<DeleteResult> {
     return await this.memberRepository.delete({ memberId });
   }
+
+  /* 모든 member 조회 */
+  async findAllMembers(): Promise<Member[]> {
+    return await this.memberRepository.find({ relations: ['course', 'user'] });
+  }
 }
