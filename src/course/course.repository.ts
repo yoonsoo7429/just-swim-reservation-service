@@ -41,4 +41,22 @@ export class CourseRepository {
       where: { courseDeletedAt: null },
     });
   }
+
+  /* 달력에 맞춰 강좌 조회(instructor) */
+  async findAllCoursesForScheduleByInstructor(
+    userId: number,
+  ): Promise<Course[]> {
+    return await this.courseRepository.find({
+      where: { user: { userId } },
+      relations: ['member', 'member.user', 'user'],
+    });
+  }
+
+  /* 달력에 맞춰 강좌 조회(customer) */
+  async findAllCoursesForScheduleByCustomer(userId: number): Promise<Course[]> {
+    return await this.courseRepository.find({
+      where: { member: { user: { userId } } },
+      relations: ['member', 'member.user', 'user'],
+    });
+  }
 }

@@ -56,4 +56,17 @@ export class CourseController {
 
     this.responseService.success(res, '강좌 상세 조회 성공', course);
   }
+
+  /* instructor 또는 customer가 본인 달력에 맞춰 강좌 조회 */
+  @Get('schedule')
+  async getAllCourseForSchedule(@Res() res: Response) {
+    const { userId, userType } = res.locals.user;
+
+    const courses = await this.courseService.findAllCoursesForSchedule(
+      userId,
+      userType,
+    );
+
+    this.responseService.success(res, '달력에 맞춘 강좌 조회 성공', courses);
+  }
 }

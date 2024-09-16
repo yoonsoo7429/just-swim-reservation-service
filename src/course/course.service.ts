@@ -1,7 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CourseRepository } from './course.repository';
 import { CourseDto } from './dto/course.dto';
 import { Course } from './entity/course.entity';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 @Injectable()
 export class CourseService {
@@ -25,5 +30,29 @@ export class CourseService {
     }
 
     return course;
+  }
+
+  /* 달력에 맞춰 강좌 조회 */
+  async findAllCoursesForSchedule(
+    userId: number,
+    userType: UserType,
+  ): Promise<Course[]> {
+    // 강사 조회
+    if (userType === UserType.Instructor) {
+      const coursesByInstructor =
+        await this.courseRepository.findAllCoursesForScheduleByInstructor(
+          userId,
+        );
+      return coursesByInstructor;
+    }
+
+    // 수강생 조회
+    if (userType === UserType.Customer) {
+      const coursesByCustomer =
+        await this.courseRepository.findAllCoursesForScheduleByCustomer(userId);
+      return coursesByCustomer;
+    }
+
+    throw new BadRequestException('잘못된 사용자 타입입니다.');
   }
 }
