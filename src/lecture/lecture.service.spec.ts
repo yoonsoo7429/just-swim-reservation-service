@@ -8,7 +8,7 @@ import { MemberRepository } from 'src/member/member.repository';
 import * as QRCode from 'qrcode';
 import { MockMemberRespository } from 'src/member/member.service.spec';
 import { LectureDto } from './dto/lecture.dto';
-import { UpdateLectureDto } from './dto/updateLecture.dto';
+import { UpdateLectureDto } from './dto/update-lecture.dto';
 import { UpdateResult } from 'typeorm';
 
 const mockUser = new MockUsersRepository().mockUser;

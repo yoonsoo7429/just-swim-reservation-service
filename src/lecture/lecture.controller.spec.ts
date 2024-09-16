@@ -5,7 +5,7 @@ import { ResponseService } from 'src/common/response/response.service';
 import { MockLectureRepository } from './lecture.service.spec';
 import { Request, Response } from 'express';
 import { LectureDto } from './dto/lecture.dto';
-import { UpdateLectureDto } from './dto/updateLecture.dto';
+import { UpdateLectureDto } from './dto/update-lecture.dto';
 
 class MockLectureService {
   createLecture = jest.fn();

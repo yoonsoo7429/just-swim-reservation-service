@@ -77,11 +77,7 @@ export class AppModule implements NestModule {
       { path: 'course/:courseId', method: RequestMethod.GET },
       { path: 'course/schedule', method: RequestMethod.GET },
       // Lecture
-      { path: 'lecture', method: RequestMethod.POST },
-      { path: 'lecture/schedule', method: RequestMethod.GET },
-      { path: 'lecture/:lectureId', method: RequestMethod.GET },
-      { path: 'lecture/:lectureId', method: RequestMethod.PUT },
-      { path: 'lecture/:lectureId', method: RequestMethod.DELETE },
+      { path: 'lecture/:lectureId', method: RequestMethod.PATCH },
       // Member
       { path: 'member', method: RequestMethod.POST },
       { path: 'member/:memberId', method: RequestMethod.DELETE },

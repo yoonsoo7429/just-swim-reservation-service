@@ -1,15 +1,24 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { LectureRepository } from './lecture.repository';
 import * as moment from 'moment';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { MemberRepository } from 'src/member/member.repository';
+import { UpdateLectureDto } from './dto/update-lecture.dto';
+import { CourseRepository } from 'src/course/course.repository';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 @Injectable()
 export class LectureService {
   constructor(
     private readonly lectureRepository: LectureRepository,
     private readonly memberRepository: MemberRepository,
+    private readonly courseRepository: CourseRepository,
   ) {}
 
   /* instructor가 customer를 member로 등록과 동시에 오늘 날짜 이후로 lecture 생성 */
@@ -46,7 +55,7 @@ export class LectureService {
 
     // LectureRepository에서 강의 생성
     const lectures =
-      await this.lectureRepository.createLecturesForNewMember(lecturesToCreate);
+      await this.lectureRepository.createLecturesForMember(lecturesToCreate);
 
     return lectures;
   }
@@ -101,7 +110,60 @@ export class LectureService {
 
     // 생성한 강의가 있으면 DB에 저장
     if (lecturesToCreate.length > 0) {
-      await this.lectureRepository.createLecturesForNewMember(lecturesToCreate);
+      await this.lectureRepository.createLecturesForMember(lecturesToCreate);
     }
+  }
+
+  /* 강의 업데이트 */
+  async updateLecture(
+    userId: number,
+    userType: UserType,
+    lectureId: number,
+    updateLectureDto: UpdateLectureDto,
+  ): Promise<UpdateResult> {
+    if (userType === UserType.Customer) {
+      // 강의 정보
+      const lecture = await this.lectureRepository.findLectureDetail(lectureId);
+      // 강좌 정보
+      const courseId = updateLectureDto.courseId;
+      const course = await this.courseRepository.findCourseDetail(courseId);
+      if (!course) {
+        throw new NotFoundException('강좌를 찾을 수 없습니다.');
+      }
+
+      if (lecture.course.user.userId !== course.user.userId) {
+        throw new BadRequestException(
+          '담당 강사님 강좌 외의 이동은 불가합니다.',
+        );
+      }
+
+      // 강의 여유 자리 확인
+      const courseCapacity = course.courseCapacity;
+      const currentLectures = course.lecture.filter(
+        (l) =>
+          l.lectureDate === updateLectureDto.lectureDate &&
+          l.lectureStartTime === updateLectureDto.lectureStartTime &&
+          l.lectureEndTime === updateLectureDto.lectureEndTime,
+      );
+      const lectureCount = currentLectures.length;
+      if (lectureCount === courseCapacity) {
+        throw new BadRequestException('해당 시간대의 여유 자리가 없습니다.');
+      }
+
+      const updateResult = await this.lectureRepository.updateLecture(
+        userId,
+        lectureId,
+        updateLectureDto,
+      );
+
+      if (updateResult.affected === 0) {
+        throw new InternalServerErrorException('강의 수정을 실패했습니다.');
+      }
+
+      return updateResult;
+    }
+
+    // if (userType === UserType.Instructor) {
+    // }
   }
 }

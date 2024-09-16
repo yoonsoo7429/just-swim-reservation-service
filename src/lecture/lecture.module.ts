@@ -6,12 +6,14 @@ import { Lecture } from './entity/lecture.entity';
 import { AwsModule } from 'src/common/aws/aws.module';
 import { LectureRepository } from './lecture.repository';
 import { MemberModule } from 'src/member/member.module';
+import { CourseModule } from 'src/course/course.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Lecture]),
     forwardRef(() => AwsModule),
     forwardRef(() => MemberModule),
+    forwardRef(() => CourseModule),
   ],
   controllers: [LectureController],
   providers: [LectureService, LectureRepository],
