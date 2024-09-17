@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from './entity/lecture.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class LectureRepository {
@@ -52,5 +53,16 @@ export class LectureRepository {
       { lectureId, user: { userId } },
       { lectureDate, lectureStartTime, lectureEndTime, course: { courseId } },
     );
+  }
+
+  /* 매일 자정에 지난 강의는 DeletedAt으로 처리 해주기 */
+  async expirePastLectures(today: string): Promise<UpdateResult> {
+    return await this.lectureRepository
+      .createQueryBuilder()
+      .update(Lecture)
+      .set({ lectureDeletedAt: moment().toDate() })
+      .where('lectureDate < :today', { today })
+      .andWhere('lectureDeletedAt IS NULL')
+      .execute();
   }
 }

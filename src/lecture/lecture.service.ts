@@ -180,4 +180,15 @@ export class LectureService {
 
     return updateResult;
   }
+
+  /* 매일 자정에 지난 강의는 DeletedAt으로 처리 해주기 */
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async expirePastLectures(): Promise<void> {
+    // 오늘 날짜
+    const today = moment().format('YYYY-MM-DD'); // 자정 기준으로 오늘 날짜 계산
+
+    // 오늘 이전에 진행된 강의 조회
+    const expiredPastLectures =
+      await this.lectureRepository.expirePastLectures(today);
+  }
 }
