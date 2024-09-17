@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { LectureRepository } from './lecture.repository';
 import * as moment from 'moment';
@@ -121,49 +122,62 @@ export class LectureService {
     lectureId: number,
     updateLectureDto: UpdateLectureDto,
   ): Promise<UpdateResult> {
-    if (userType === UserType.Customer) {
-      // 강의 정보
-      const lecture = await this.lectureRepository.findLectureDetail(lectureId);
-      // 강좌 정보
-      const courseId = updateLectureDto.courseId;
-      const course = await this.courseRepository.findCourseDetail(courseId);
-      if (!course) {
-        throw new NotFoundException('강좌를 찾을 수 없습니다.');
-      }
-
-      if (lecture.course.user.userId !== course.user.userId) {
-        throw new BadRequestException(
-          '담당 강사님 강좌 외의 이동은 불가합니다.',
-        );
-      }
-
-      // 강의 여유 자리 확인
-      const courseCapacity = course.courseCapacity;
-      const currentLectures = course.lecture.filter(
-        (l) =>
-          l.lectureDate === updateLectureDto.lectureDate &&
-          l.lectureStartTime === updateLectureDto.lectureStartTime &&
-          l.lectureEndTime === updateLectureDto.lectureEndTime,
-      );
-      const lectureCount = currentLectures.length;
-      if (lectureCount === courseCapacity) {
-        throw new BadRequestException('해당 시간대의 여유 자리가 없습니다.');
-      }
-
-      const updateResult = await this.lectureRepository.updateLecture(
-        userId,
-        lectureId,
-        updateLectureDto,
-      );
-
-      if (updateResult.affected === 0) {
-        throw new InternalServerErrorException('강의 수정을 실패했습니다.');
-      }
-
-      return updateResult;
+    // 강의 정보
+    const lecture = await this.lectureRepository.findLectureDetail(lectureId);
+    if (!lecture) {
+      throw new NotFoundException('수정할 강의를 찾을 수 없습니다.');
     }
 
-    // if (userType === UserType.Instructor) {
-    // }
+    // 사용자 권한 확인
+    if (userType === UserType.Customer) {
+      // 수강생은 자신이 등록된 강의만 수정 가능
+      if (lecture.user.userId !== userId) {
+        throw new UnauthorizedException(
+          '수강생으로서 강의 수정 권한이 없습니다.',
+        );
+      }
+    }
+    if (userType === UserType.Instructor) {
+      // 강사는 자신이 담당한 강좌의 강의만 수정 가능
+      if (lecture.course.user.userId !== userId) {
+        throw new UnauthorizedException('강사로서 강의 수정 권한이 없습니다.');
+      }
+    }
+
+    // 강좌 정보
+    const courseId = updateLectureDto.courseId;
+    const course = await this.courseRepository.findCourseDetail(courseId);
+    if (!course) {
+      throw new NotFoundException('변경할 강좌를 찾을 수 없습니다.');
+    }
+
+    if (lecture.course.user.userId !== course.user.userId) {
+      throw new BadRequestException('담당 강사님 강좌 외의 이동은 불가합니다.');
+    }
+
+    // 강의 여유 자리 확인
+    const courseCapacity = course.courseCapacity;
+    const currentLectures = course.lecture.filter(
+      (l) =>
+        l.lectureDate === updateLectureDto.lectureDate &&
+        l.lectureStartTime === updateLectureDto.lectureStartTime &&
+        l.lectureEndTime === updateLectureDto.lectureEndTime,
+    );
+    const lectureCount = currentLectures.length;
+    if (lectureCount >= courseCapacity) {
+      throw new BadRequestException('해당 시간대의 여유 자리가 없습니다.');
+    }
+
+    const updateResult = await this.lectureRepository.updateLecture(
+      userId,
+      lectureId,
+      updateLectureDto,
+    );
+
+    if (updateResult.affected === 0) {
+      throw new InternalServerErrorException('강의 수정을 실패했습니다.');
+    }
+
+    return updateResult;
   }
 }
