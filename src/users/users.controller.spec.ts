@@ -132,6 +132,8 @@ describe('UsersController', () => {
         userType: UserType.Customer,
         userCreatedAt: new Date(),
         userUpdatedAt: new Date(),
+        member: [],
+        course: [],
         instructor: [],
         customer: [],
         lecture: [],

@@ -10,7 +10,6 @@ export class MockCustomerRepository {
     user: new Users(),
     customerName: '홍길동',
     customerProfileImage: null,
-    customerEnrollment: null,
     customerBirth: '1995.09.13',
     customerPhoneNumber: '010-1234-1234',
     customerGender: '남자',

@@ -12,7 +12,6 @@ export class MockInstructorRepository {
     instructorPhoneNumber: '010-1235-1235',
     instructorCareer: null,
     instructorProfileImage: null,
-    instructorCourse: null,
     instructorCreatedAt: new Date(),
     instructorUpdatedAt: new Date(),
   };

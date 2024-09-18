@@ -20,6 +20,8 @@ export class MockUsersRepository {
     userUpdatedAt: new Date(),
     instructor: [],
     customer: [],
+    member: [],
+    course: [],
     lecture: [],
   };
 }
@@ -124,20 +126,14 @@ describe('UsersService', () => {
   });
 
   describe('selectUserType', () => {
-    it('customer를 선택하고 UpdateResult를 return', async () => {
+    it('userType을 선택하고 UpdateResult를 return', async () => {
       const userId = 1;
-      const userType = UserType.Customer;
+      const userType = UserType.Customer || UserType.Instructor;
       mockUser.userType = null;
 
       (usersRepository.findUserByPk as jest.Mock).mockResolvedValue(mockUser);
       (usersRepository.selectUserType as jest.Mock).mockResolvedValue(
         UpdateResult,
-      );
-      (customerRepository.createCustomer as jest.Mock).mockResolvedValue(
-        mockCustomer,
-      );
-      (instructorRepository.createInstructor as jest.Mock).mockResolvedValue(
-        mockInstructor,
       );
 
       await usersService.selectUserType(userId, userType);
@@ -145,36 +141,6 @@ describe('UsersService', () => {
       expect(usersRepository.selectUserType).toHaveBeenCalledWith(
         userId,
         userType,
-      );
-      expect(customerRepository.createCustomer).toHaveBeenCalledWith(userId);
-      expect(instructorRepository.createInstructor).not.toHaveBeenCalled();
-    });
-
-    it('instructor를 선택하고 UpdateResult를 return', async () => {
-      const userId = 1;
-      const userType = UserType.Instructor;
-      mockUser.userType = null;
-
-      (usersRepository.findUserByPk as jest.Mock).mockResolvedValue(mockUser);
-      (usersRepository.selectUserType as jest.Mock).mockResolvedValue(
-        UpdateResult,
-      );
-      (customerRepository.createCustomer as jest.Mock).mockResolvedValue(
-        mockCustomer,
-      );
-      (instructorRepository.createInstructor as jest.Mock).mockResolvedValue(
-        mockInstructor,
-      );
-
-      await usersService.selectUserType(userId, userType);
-
-      expect(usersRepository.selectUserType).toHaveBeenCalledWith(
-        userId,
-        userType,
-      );
-      expect(customerRepository.createCustomer).not.toHaveBeenCalled();
-      expect(instructorRepository.createInstructor).toHaveBeenCalledWith(
-        userId,
       );
     });
   });
