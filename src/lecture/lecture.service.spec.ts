@@ -5,43 +5,39 @@ import { MockUsersRepository } from 'src/users/users.service.spec';
 import { LectureRepository } from './lecture.repository';
 import { AwsService } from 'src/common/aws/aws.service';
 import { MemberRepository } from 'src/member/member.repository';
-import * as QRCode from 'qrcode';
-import { MockMemberRespository } from 'src/member/member.service.spec';
 import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
-import { UpdateResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { MockCourseRepository } from 'src/course/course.service.spec';
+import { CourseRepository } from 'src/course/course.repository';
+import { MockMemberRepository } from 'src/member/member.service.spec';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 const mockUser = new MockUsersRepository().mockUser;
+const mockMember = new MockMemberRepository().mockMember;
+const mockCourse = new MockCourseRepository().mockCourse;
 
 export class MockLectureRepository {
   readonly mockLecture: Lecture = {
     lectureId: 1,
     user: mockUser,
-    lectureTitle: '1:4 소그룹',
-    lectureContent:
-      '1:4 소그룹 아이들 수업입니다. 개인 진도에 맞춰 진행합니다.',
-    lectureDays: '월수금',
+    course: mockCourse,
+    lectureDate: 'Monday,Wednesday,Friday',
     lectureStartTime: '16:00',
     lectureEndTime: '17:00',
-    lectureEndDate: '2024.10.26',
-    lectureQRCode: 'QRCode',
     lectureCreatedAt: new Date(),
     lectureUpdatedAt: new Date(),
     lectureDeletedAt: null,
-    member: [],
-    attendance: [],
-    makeUpLecture: [],
   };
 }
 
 describe('LectureService', () => {
   let lectureService: LectureService;
   let lectureRepository: LectureRepository;
-  let awsService: AwsService;
   let memberRepository: MemberRepository;
+  let courseRepository: CourseRepository;
 
   const mockLecture = new MockLectureRepository().mockLecture;
-  const mockMember = new MockMemberRespository().mockMember;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,34 +46,28 @@ describe('LectureService', () => {
         {
           provide: LectureRepository,
           useValue: {
-            createLecture: jest.fn(),
-            saveQRCode: jest.fn(),
-            findAllLecturesByInstructor: jest.fn(),
+            createLecturesForMember: jest.fn(),
+            deleteLecturesForMember: jest.fn(),
             findLectureDetail: jest.fn(),
             updateLecture: jest.fn(),
-            softDeleteLecture: jest.fn(),
-            findLectureWithTimeConflict: jest.fn(),
-          },
-        },
-        {
-          provide: AwsService,
-          useValue: {
-            uploadImageToS3: jest.fn(),
-            deleteImageFromS3: jest.fn(),
-            uploadQRCodeToS3: jest.fn(),
+            expirePastLectures: jest.fn(),
           },
         },
         {
           provide: MemberRepository,
-          useValue: { findAllLecturesByCustomer: jest.fn() },
+          useValue: { findAllMembers: jest.fn() },
+        },
+        {
+          provide: CourseRepository,
+          useValue: { findCourseDetail: jest.fn() },
         },
       ],
     }).compile();
 
     lectureService = module.get<LectureService>(LectureService);
     lectureRepository = module.get<LectureRepository>(LectureRepository);
-    awsService = module.get<AwsService>(AwsService);
     memberRepository = module.get<MemberRepository>(MemberRepository);
+    courseRepository = module.get<CourseRepository>(CourseRepository);
   });
 
   it('should be defined', () => {
@@ -86,167 +76,122 @@ describe('LectureService', () => {
 
   describe('createLecture', () => {
     it('강의를 생성하고 강의 정보를 return', async () => {
-      const userId = mockUser.userId;
-      const lectureDto: LectureDto = {
-        lectureTitle: '1:4 소그룹',
-        lectureContent: '1:4 소그룹 아이들 수업입니다. 초급반입니다.',
-        lectureDays: '화목',
-        lectureStartTime: '18:00',
-        lectureEndTime: '19:00',
-        lectureEndDate: '2024.10.30',
-        lectureQRCode: 'QRCode',
-      };
-      const newLecture: Lecture = {
-        lectureId: 1,
-        user: mockUser,
-        lectureTitle: lectureDto.lectureTitle,
-        lectureContent: lectureDto.lectureContent,
-        lectureDays: lectureDto.lectureDays,
-        lectureStartTime: lectureDto.lectureStartTime,
-        lectureEndTime: lectureDto.lectureEndTime,
-        lectureQRCode: lectureDto.lectureQRCode,
-        lectureEndDate: lectureDto.lectureEndDate,
-        lectureCreatedAt: new Date(),
-        lectureUpdatedAt: new Date(),
-        lectureDeletedAt: null,
-        member: [],
-        attendance: [],
-        makeUpLecture: [],
-      };
-
-      const mockQRCode = `${newLecture.lectureId}`;
-      jest.spyOn(QRCode, 'toDataURL').mockResolvedValue(mockQRCode as never);
-      (lectureRepository.createLecture as jest.Mock).mockResolvedValue(
-        newLecture,
-      );
-      (lectureRepository.saveQRCode as jest.Mock).mockResolvedValue(
-        UpdateResult,
-      );
-
-      const result = await lectureService.createLecture(lectureDto, userId);
-
-      expect(result).toEqual(newLecture);
-      expect(lectureRepository.createLecture).toHaveBeenCalledWith(
-        lectureDto,
-        userId,
-      );
-      expect(QRCode.toDataURL).toHaveBeenCalledWith(
-        `${process.env.SERVER_QR_CHECK_URI}?lectureId=${newLecture.lectureId}`,
-      );
-      expect(awsService.uploadQRCodeToS3).toHaveBeenCalledWith(
-        newLecture.lectureId,
-        expect.any(String),
-      );
-    });
-  });
-
-  describe('findAllLectures', () => {
-    it('강사가 전체 강의를 조회', async () => {
       const userId = 1;
-      const userType = 'instructor';
+      const courseId = 1;
+      const lectureDays = 'Monday,Wednesday,Friday';
+      const lectureStartTime = '16:00';
+      const lectureEndTime = '17:00';
+      const lecturesToCreate = [
+        {
+          lectureDate: '2024-09-19',
+          lectureStartTime,
+          lectureEndTime,
+          user: { userId },
+          course: { courseId },
+        },
+      ];
+
       jest
-        .spyOn(lectureRepository, 'findAllLecturesByInstructor')
+        .spyOn(lectureRepository, 'createLecturesForMember')
         .mockResolvedValue([mockLecture]);
 
-      const result = await lectureService.findAllLecturesForSchedule(
+      const result = await lectureService.createLecturesForMember(
+        courseId,
         userId,
-        userType,
+        lectureDays,
+        lectureStartTime,
+        lectureEndTime,
       );
 
       expect(result).toEqual([mockLecture]);
-      expect(
-        lectureRepository.findAllLecturesByInstructor,
-      ).toHaveBeenCalledWith(userId);
     });
+  });
 
-    it('수강생이 전체 강의를 조회', async () => {
-      const userId = 2;
-      const userType = 'customer';
-      jest
-        .spyOn(memberRepository, 'findAllLecturesByCustomer')
-        .mockResolvedValue([mockMember]);
+  describe('deleteLecturesForMember', () => {
+    it('수강생 등록 취소에 맞춰 강의를 삭제한다', async () => {
+      const userId = 1;
+      const courseId = 1;
 
-      const result = await lectureService.findAllLecturesForSchedule(
+      (
+        lectureRepository.deleteLecturesForMember as jest.Mock
+      ).mockResolvedValue(DeleteResult);
+
+      const result = await lectureService.deleteLecturesForMember(
+        courseId,
         userId,
-        userType,
       );
 
-      expect(result).toEqual([[mockMember][0].lecture]);
-      expect(memberRepository.findAllLecturesByCustomer).toHaveBeenCalledWith(
+      expect(result).toEqual(DeleteResult);
+      expect(lectureRepository.deleteLecturesForMember).toHaveBeenCalledWith(
+        courseId,
         userId,
       );
     });
   });
 
-  describe('findLectureDetail', () => {
-    it('lectureId를 통해 강의를 상세 조회해여 lecture를 return', async () => {
-      const userId = 1;
-      const lectureId = 1;
+  describe('createLecturesForNextMonth', () => {
+    it('매달 첫 날, member에 맞춰 다음 달 강의 생성', async () => {
       jest
-        .spyOn(lectureRepository, 'findLectureDetail')
-        .mockResolvedValue(mockLecture as Lecture);
+        .spyOn(memberRepository, 'findAllMembers')
+        .mockResolvedValue([mockMember]);
 
-      const result = await lectureService.findLectureDetail(userId, lectureId);
+      await lectureService.createLecturesForNextMonth();
 
-      expect(result).toEqual(mockLecture);
-      expect(lectureRepository.findLectureDetail).toHaveBeenCalledWith(
-        lectureId,
-      );
+      expect(memberRepository.findAllMembers).toHaveBeenCalled();
+      expect(lectureRepository.createLecturesForMember).toHaveBeenCalled();
     });
   });
 
   describe('updateLecture', () => {
-    it('수정 내용을 받아 강의를 수정하고 UpdateResult를 return', async () => {
+    it('강의를 수정하고 UpdateResult를 반환해야 한다', async () => {
       const userId = 1;
       const lectureId = 1;
-
       const updateLectureDto: UpdateLectureDto = {
-        lectureDays: '월수금',
+        lectureDate: '2024-09-20',
+        lectureStartTime: '18:00',
+        lectureEndTime: '19:00',
+        courseId: 1,
       };
 
       jest
+        .spyOn(courseRepository, 'findCourseDetail')
+        .mockResolvedValue(mockCourse);
+      jest
         .spyOn(lectureRepository, 'findLectureDetail')
-        .mockResolvedValue(mockLecture as Lecture);
-      jest.spyOn(lectureRepository, 'updateLecture').mockResolvedValue({
-        generatedMaps: [],
-        raw: {},
-        affected: 1,
-      });
+        .mockResolvedValue(mockLecture);
+      (lectureRepository.updateLecture as jest.Mock).mockResolvedValue(
+        UpdateResult,
+      );
 
-      await lectureService.updateLecture(userId, lectureId, updateLectureDto);
+      const result = await lectureService.updateLecture(
+        userId,
+        UserType.Instructor,
+        lectureId,
+        updateLectureDto,
+      );
 
+      expect(result).toEqual(UpdateResult);
       expect(lectureRepository.findLectureDetail).toHaveBeenCalledWith(
         lectureId,
       );
       expect(lectureRepository.updateLecture).toHaveBeenCalledWith(
+        userId,
         lectureId,
         updateLectureDto,
       );
     });
   });
 
-  describe('softDeleteLecture', () => {
-    it('lectureId에 해당하는 강의 삭제(softDelete)한 후 UpdateResult를 return', async () => {
-      const userId = 1;
-      const lectureId = 1;
-
+  describe('expirePastLectures', () => {
+    it('지난 강의를 만료 처리한다', async () => {
+      const today = '2024-09-19';
       jest
-        .spyOn(lectureRepository, 'findLectureDetail')
-        .mockResolvedValue(mockLecture as Lecture);
-      jest.spyOn(lectureRepository, 'softDeleteLecture').mockResolvedValue({
-        generatedMaps: [],
-        raw: {},
-        affected: 1,
-      });
+        .spyOn(lectureRepository, 'expirePastLectures')
+        .mockResolvedValue(undefined);
 
-      await lectureService.softDeleteLecture(userId, lectureId);
+      await lectureService.expirePastLectures();
 
-      expect(lectureRepository.findLectureDetail).toHaveBeenCalledWith(
-        lectureId,
-      );
-      expect(lectureRepository.softDeleteLecture).toHaveBeenCalledWith(
-        lectureId,
-      );
+      expect(lectureRepository.expirePastLectures).toHaveBeenCalledWith(today);
     });
   });
 });

@@ -13,6 +13,7 @@ import { MemberRepository } from 'src/member/member.repository';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
 import { CourseRepository } from 'src/course/course.repository';
 import { UserType } from 'src/users/enum/user-type.enum';
+import { Lecture } from './entity/lecture.entity';
 
 @Injectable()
 export class LectureService {
@@ -29,7 +30,7 @@ export class LectureService {
     lectureDays: string,
     lectureStartTime: string,
     lectureEndTime: string,
-  ) {
+  ): Promise<Lecture[]> {
     // 오늘 날짜를 기준으로 이번달 lecture에 들어갈 lectureDate를 계산
     // 오늘 날짜 가져오기
     const today = moment();
