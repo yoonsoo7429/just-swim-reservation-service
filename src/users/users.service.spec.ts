@@ -4,11 +4,7 @@ import { UsersRepository } from './users.repository';
 import { Users } from './entity/users.entity';
 import { UserType } from './enum/user-type.enum';
 import { UsersDto } from './dto/users.dto';
-import { CustomerRepository } from 'src/customer/customer.repository';
-import { InstructorRepository } from 'src/instructor/instructor.repository';
 import { UpdateResult } from 'typeorm';
-import { MockCustomerRepository } from 'src/customer/customer.service.spec';
-import { MockInstructorRepository } from 'src/instructor/instructor.service.spec';
 
 export class MockUsersRepository {
   readonly mockUser: Users = {
@@ -29,12 +25,8 @@ export class MockUsersRepository {
 describe('UsersService', () => {
   let usersService: UsersService;
   let usersRepository: UsersRepository;
-  let customerRepository: CustomerRepository;
-  let instructorRepository: InstructorRepository;
 
   const mockUser = new MockUsersRepository().mockUser;
-  const mockCustomer = new MockCustomerRepository().mockCustomer;
-  const mockInstructor = new MockInstructorRepository().mockInstructor;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,22 +41,11 @@ describe('UsersService', () => {
             selectUserType: jest.fn(),
           },
         },
-        {
-          provide: CustomerRepository,
-          useValue: { createCustomer: jest.fn() },
-        },
-        {
-          provide: InstructorRepository,
-          useValue: { createInstructor: jest.fn() },
-        },
       ],
     }).compile();
 
     usersService = module.get<UsersService>(UsersService);
     usersRepository = module.get<UsersRepository>(UsersRepository);
-    customerRepository = module.get<CustomerRepository>(CustomerRepository);
-    instructorRepository =
-      module.get<InstructorRepository>(InstructorRepository);
   });
 
   it('should be defined', () => {
