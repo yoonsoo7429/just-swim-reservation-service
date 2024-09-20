@@ -113,7 +113,7 @@ describe('MemberService', () => {
         DeleteResult,
       );
 
-      const result = await memberService.deleteMember(1, 1);
+      await memberService.deleteMember(1, 1);
 
       expect(memberRepository.findMemberDetail).toHaveBeenCalledWith(1);
       expect(memberRepository.deleteMember).toHaveBeenCalledWith(1);
