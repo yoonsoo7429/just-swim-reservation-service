@@ -2,9 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LectureController } from './lecture.controller';
 import { LectureService } from './lecture.service';
 import { ResponseService } from 'src/common/response/response.service';
-import { MockLectureRepository } from './lecture.service.spec';
 import { Request, Response } from 'express';
-import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
 
 class MockLectureService {
@@ -29,8 +27,6 @@ describe('LectureController', () => {
   let lectureController: LectureController;
   let lectureService: MockLectureService;
   let responseService: MockResponseService;
-
-  const mockLecture = new MockLectureRepository().mockLecture;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({

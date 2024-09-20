@@ -3,6 +3,7 @@ import { CustomerService } from './customer.service';
 import { Customer } from 'src/customer/entity/customer.entity';
 import { CustomerRepository } from './customer.repository';
 import { Users } from 'src/users/entity/users.entity';
+import { CustomerDto } from './dto/customer.dto';
 
 export class MockCustomerRepository {
   readonly mockCustomer: Customer = {
@@ -42,5 +43,27 @@ describe('CustomerService', () => {
 
   it('should be defined', () => {
     expect(customerService).toBeDefined();
+  });
+
+  describe('createCustomer', () => {
+    it('고객이 추가 정보를 입력하여 자신의 계정을 활성화한다', async () => {
+      const userId = 2;
+      const customerDto: CustomerDto = {
+        customerName: '홍길동',
+        customerProfileImage: null,
+        customerBirth: '1995.09.13',
+        customerPhoneNumber: '010-1234-1234',
+        customerGender: '남자',
+        customerAddress: '경기도 고양시 일산동구',
+      };
+
+      jest
+        .spyOn(customerRepository, 'createCustomer')
+        .mockResolvedValue(mockCustomer);
+
+      const result = await customerService.createCustomer(userId, customerDto);
+
+      expect(result).toEqual(mockCustomer);
+    });
   });
 });

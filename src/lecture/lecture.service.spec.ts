@@ -3,15 +3,14 @@ import { LectureService } from './lecture.service';
 import { Lecture } from './entity/lecture.entity';
 import { MockUsersRepository } from 'src/users/users.service.spec';
 import { LectureRepository } from './lecture.repository';
-import { AwsService } from 'src/common/aws/aws.service';
 import { MemberRepository } from 'src/member/member.repository';
-import { LectureDto } from './dto/lecture.dto';
 import { UpdateLectureDto } from './dto/update-lecture.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { MockCourseRepository } from 'src/course/course.service.spec';
 import { CourseRepository } from 'src/course/course.repository';
 import { MockMemberRepository } from 'src/member/member.service.spec';
 import { UserType } from 'src/users/enum/user-type.enum';
+import * as moment from 'moment';
 
 const mockUser = new MockUsersRepository().mockUser;
 const mockMember = new MockMemberRepository().mockMember;
@@ -184,7 +183,7 @@ describe('LectureService', () => {
 
   describe('expirePastLectures', () => {
     it('지난 강의를 만료 처리한다', async () => {
-      const today = '2024-09-19';
+      const today = moment().format('YYYY-MM-DD');
       jest
         .spyOn(lectureRepository, 'expirePastLectures')
         .mockResolvedValue(undefined);

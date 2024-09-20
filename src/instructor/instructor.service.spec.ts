@@ -3,6 +3,7 @@ import { InstructorService } from './instructor.service';
 import { Instructor } from './entity/instrutor.entity';
 import { InstructorRepository } from './instructor.repository';
 import { Users } from 'src/users/entity/users.entity';
+import { InstructorDto } from './dto/instructor.dto';
 
 export class MockInstructorRepository {
   readonly mockInstructor: Instructor = {
@@ -20,6 +21,8 @@ export class MockInstructorRepository {
 describe('InstructorService', () => {
   let instructorService: InstructorService;
   let instructorRepository: InstructorRepository;
+
+  const mockInstructor = new MockInstructorRepository().mockInstructor;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,5 +42,28 @@ describe('InstructorService', () => {
 
   it('should be defined', () => {
     expect(instructorService).toBeDefined();
+  });
+
+  describe('createInstructor', () => {
+    it('강사가 추가 정보를 입력하여 자신의 계정을 활성화한다', async () => {
+      const userId = 1;
+      const instructorDto: InstructorDto = {
+        instructorName: '홍길순',
+        instructorPhoneNumber: '010-1235-1235',
+        instructorCareer: null,
+        instructorProfileImage: null,
+      };
+
+      jest
+        .spyOn(instructorRepository, 'createInstructor')
+        .mockResolvedValue(mockInstructor);
+
+      const result = await instructorService.createInstructor(
+        userId,
+        instructorDto,
+      );
+
+      expect(result).toEqual(mockInstructor);
+    });
   });
 });
