@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entity/course.entity';
-import { Repository } from 'typeorm';
+import { In, LessThan, MoreThan, Repository } from 'typeorm';
 import { CourseDto } from './dto/course.dto';
 
 @Injectable()
@@ -58,5 +58,36 @@ export class CourseRepository {
       where: { member: { user: { userId } } },
       relations: ['member', 'member.user', 'user'],
     });
+  }
+
+  /* 겹치는 시간대 강좌 확인 */
+  async findOverlappingCourse(
+    userId: number,
+    courseDto: CourseDto,
+  ): Promise<Course> {
+    const { courseDays, courseStartTime, courseEndTime } = courseDto;
+
+    // 요일을 배열로 변환
+    if (courseDays.includes(',')) {
+      // days를 분리
+      const daysArray = courseDays.split(',');
+      return await this.courseRepository.findOne({
+        where: {
+          user: { userId },
+          courseDays: In(daysArray),
+          courseStartTime: LessThan(courseEndTime),
+          courseEndTime: MoreThan(courseStartTime),
+        },
+      });
+    } else {
+      return await this.courseRepository.findOne({
+        where: {
+          user: { userId },
+          courseDays: courseDays,
+          courseStartTime: LessThan(courseEndTime),
+          courseEndTime: MoreThan(courseStartTime),
+        },
+      });
+    }
   }
 }

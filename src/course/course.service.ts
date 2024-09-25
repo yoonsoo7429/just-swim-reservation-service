@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -14,6 +15,15 @@ export class CourseService {
 
   /* 강좌 개설 */
   async createCourse(userId: number, courseDto: CourseDto): Promise<Course> {
+    // 겹치는 시간대 확인
+    const overlappingCourse = await this.courseRepository.findOverlappingCourse(
+      userId,
+      courseDto,
+    );
+    if (overlappingCourse) {
+      throw new ConflictException('이미 겹치는 시간에 강좌가 있습니다.');
+    }
+
     return await this.courseRepository.createCourse(userId, courseDto);
   }
 

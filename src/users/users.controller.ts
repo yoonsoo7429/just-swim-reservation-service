@@ -90,6 +90,6 @@ export class UsersController {
     let token: string = await this.authService.getToken(userId);
 
     res.cookie('authorization', token);
-    return this.responseService.success(res, 'signIn success');
+    this.responseService.success(res, 'signIn success');
   }
 }
