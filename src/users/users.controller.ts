@@ -81,6 +81,15 @@ export class UsersController {
     this.responseService.success(res, 'userType 지정 완료');
   }
 
+  /* 나의 프로필 조회 */
+  @Get('user/myProfile')
+  async getUserProfile(@Res() res: Response) {
+    const { userId } = res.locals.user;
+    const userProfile = await this.usersService.findUserByPk(userId);
+
+    this.responseService.success(res, '프로필 조회 성공', userProfile);
+  }
+
   /* 개발자를 위한 로그인 */
   @Post('signIn')
   async signIn(

@@ -40,8 +40,8 @@ import { MemberModule } from './member/member.module';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
-        // synchronize: false,
+        // synchronize: true,
+        synchronize: false,
       }),
       inject: [ConfigService],
     }),
@@ -67,6 +67,9 @@ import { MemberModule } from './member/member.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(AuthMiddleware).forRoutes(
+      // User
+      { path: 'user/myProfile', method: RequestMethod.GET },
+      { path: 'user/:userType', method: RequestMethod.POST },
       // Customer
       { path: 'customer', method: RequestMethod.POST },
       // Instructor
