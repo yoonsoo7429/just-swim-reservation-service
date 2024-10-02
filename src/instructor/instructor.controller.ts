@@ -3,6 +3,7 @@ import { ResponseService } from 'src/common/response/response.service';
 import { InstructorService } from './instructor.service';
 import { InstructorDto } from './dto/instructor.dto';
 import { Response } from 'express';
+import { UserType } from 'src/users/enum/user-type.enum';
 
 @Controller('instructor')
 export class InstructorController {
@@ -17,7 +18,14 @@ export class InstructorController {
     @Body() instructorDto: InstructorDto,
     @Res() res: Response,
   ) {
-    const { userId } = res.locals.user;
+    const { userId, userType } = res.locals.user;
+
+    if (userType !== UserType.Instructor) {
+      this.responseService.unauthorized(
+        res,
+        '현재 계정은 강사 프로필을 작성할 수 없습니다.',
+      );
+    }
 
     const instructor = await this.instructorService.createInstructor(
       userId,
