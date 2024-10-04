@@ -21,7 +21,7 @@ export class Customer {
   @Column({ type: 'varchar' })
   customerName: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'mediumtext', nullable: true })
   customerProfileImage: string;
 
   @Column({ type: 'varchar' })

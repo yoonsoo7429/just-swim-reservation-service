@@ -31,7 +31,10 @@ export class UsersRepository {
 
   /* userId를 통해 조회 */
   async findUserByPk(userId: number): Promise<Users> {
-    return await this.usersRepository.findOne({ where: { userId } });
+    return await this.usersRepository.findOne({
+      where: { userId },
+      relations: ['customer', 'instructor'],
+    });
   }
 
   /* userType 지정 */
