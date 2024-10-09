@@ -25,9 +25,6 @@ export class Instructor {
   instructorPhoneNumber: string;
 
   @Column({ type: 'varchar', nullable: true })
-  instructorCareer: string;
-
-  @Column({ type: 'varchar', nullable: true })
   instructorProfileImage: string;
 
   @CreateDateColumn({ type: 'timestamp' })

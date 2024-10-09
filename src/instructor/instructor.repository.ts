@@ -16,17 +16,12 @@ export class InstructorRepository {
     userId: number,
     instructorDto: InstructorDto,
   ): Promise<Instructor> {
-    const {
-      instructorName,
-      instructorProfileImage,
-      instructorCareer,
-      instructorPhoneNumber,
-    } = instructorDto;
+    const { instructorName, instructorProfileImage, instructorPhoneNumber } =
+      instructorDto;
 
     const instructor = this.instructorRepository.create({
       instructorName,
       instructorProfileImage,
-      instructorCareer,
       instructorPhoneNumber,
       user: { userId },
     });
