@@ -5,7 +5,7 @@ import { Response } from 'express';
 import { ResponseService } from 'src/common/response/response.service';
 import { UserType } from 'src/users/enum/user-type.enum';
 
-@Controller('course')
+@Controller()
 export class CourseController {
   constructor(
     private readonly responseService: ResponseService,
@@ -13,7 +13,7 @@ export class CourseController {
   ) {}
 
   /* 강좌 개설 */
-  @Post()
+  @Post('course')
   async createCourse(@Body() courseDto: CourseDto, @Res() res: Response) {
     const { userId, userType } = res.locals.user;
 
@@ -27,7 +27,7 @@ export class CourseController {
   }
 
   /* 모든 강좌 조회 */
-  @Get()
+  @Get('course')
   async getAllCourses(@Res() res: Response) {
     const { userType } = res.locals.user;
 
@@ -41,7 +41,7 @@ export class CourseController {
   }
 
   /* 강좌 상세 조회 */
-  @Get(':courseId')
+  @Get('course/:courseId')
   async getCourseDetail(
     @Param('courseId') courseId: number,
     @Res() res: Response,

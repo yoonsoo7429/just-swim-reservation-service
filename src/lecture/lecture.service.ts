@@ -34,14 +34,16 @@ export class LectureService {
     // 오늘 날짜를 기준으로 이번달 lecture에 들어갈 lectureDate를 계산
     // 오늘 날짜 가져오기
     const today = moment();
+    const endOfMonth = today.clone().endOf('month');
+
     // lectureDays를 배열로 분리
     const daysOfWeek = lectureDays.split(',');
 
     // 현재 달의 모든 날짜 중에서 강의 날짜 필터링
     const lecturesToCreate = [];
 
-    for (let i = 0; i < 30; i++) {
-      const date = today.clone().add(i, 'days');
+    let date = today.clone();
+    while (date.isSameOrBefore(endOfMonth)) {
       const dayName = date.format('dddd');
 
       if (daysOfWeek.includes(dayName) && date.isAfter(today)) {
@@ -53,6 +55,8 @@ export class LectureService {
           course: { courseId },
         });
       }
+
+      date.add(1, 'days');
     }
 
     // LectureRepository에서 강의 생성

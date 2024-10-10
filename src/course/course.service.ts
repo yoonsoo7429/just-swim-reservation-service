@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CourseRepository } from './course.repository';
@@ -35,6 +36,11 @@ export class CourseService {
   /* 강좌 상세 조회 */
   async findCourseDetail(courseId: number, userId: number): Promise<Course> {
     const course = await this.courseRepository.findCourseDetail(courseId);
+
+    if (!course) {
+      throw new NotFoundException('상세 조회할 강좌가 존재하지 않습니다.');
+    }
+
     if (course.user.userId !== userId) {
       throw new UnauthorizedException('강좌 상세 조회 권한이 없습니다.');
     }

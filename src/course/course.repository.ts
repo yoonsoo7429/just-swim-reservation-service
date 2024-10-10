@@ -48,7 +48,7 @@ export class CourseRepository {
   ): Promise<Course[]> {
     return await this.courseRepository.find({
       where: { user: { userId } },
-      relations: ['member', 'member.user', 'user'],
+      relations: ['user', 'lecture', 'lecture.user'],
     });
   }
 
@@ -56,7 +56,7 @@ export class CourseRepository {
   async findAllCoursesForScheduleByCustomer(userId: number): Promise<Course[]> {
     return await this.courseRepository.find({
       where: { member: { user: { userId } } },
-      relations: ['member', 'member.user', 'user'],
+      relations: ['member', 'member.user', 'user', 'lecture'],
     });
   }
 
