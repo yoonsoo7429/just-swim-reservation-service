@@ -23,6 +23,9 @@ export class Course {
   user: Users;
 
   @Column({ type: 'varchar' })
+  courseTitle: string;
+
+  @Column({ type: 'varchar' })
   courseDays: string;
 
   @Column({ type: 'varchar' })

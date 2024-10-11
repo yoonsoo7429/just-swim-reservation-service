@@ -3,6 +3,10 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class CourseDto {
   @IsNotEmpty()
   @IsString()
+  readonly courseTitle: string;
+
+  @IsNotEmpty()
+  @IsString()
   readonly courseDays: string;
 
   @IsNotEmpty()

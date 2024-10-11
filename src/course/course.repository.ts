@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entity/course.entity';
-import { In, LessThan, MoreThan, Repository } from 'typeorm';
+import { Between, In, LessThan, MoreThan, Repository } from 'typeorm';
 import { CourseDto } from './dto/course.dto';
+import * as moment from 'moment';
 
 @Injectable()
 export class CourseRepository {
@@ -12,10 +13,16 @@ export class CourseRepository {
 
   /* 강좌 개설 */
   async createCourse(userId: number, courseDto: CourseDto): Promise<Course> {
-    const { courseDays, courseStartTime, courseEndTime, courseCapacity } =
-      courseDto;
+    const {
+      courseTitle,
+      courseDays,
+      courseStartTime,
+      courseEndTime,
+      courseCapacity,
+    } = courseDto;
 
     const course = this.courseRepository.create({
+      courseTitle,
       courseDays,
       courseStartTime,
       courseEndTime,
@@ -46,17 +53,27 @@ export class CourseRepository {
   async findAllCoursesForScheduleByInstructor(
     userId: number,
   ): Promise<Course[]> {
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
     return await this.courseRepository.find({
-      where: { user: { userId } },
-      relations: ['user', 'lecture', 'lecture.user'],
+      where: {
+        user: { userId },
+        lecture: { lectureDate: Between(startOfMonth, endOfMonth) },
+      },
+      relations: ['user', 'lecture', 'lecture.user', 'lecture.user.customer'],
     });
   }
 
   /* 달력에 맞춰 강좌 조회(customer) */
   async findAllCoursesForScheduleByCustomer(userId: number): Promise<Course[]> {
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
     return await this.courseRepository.find({
-      where: { member: { user: { userId } } },
-      relations: ['member', 'member.user', 'user', 'lecture'],
+      where: {
+        member: { user: { userId } },
+        lecture: { lectureDate: Between(startOfMonth, endOfMonth) },
+      },
+      relations: ['user', 'lecture', 'lecture.user'],
     });
   }
 
