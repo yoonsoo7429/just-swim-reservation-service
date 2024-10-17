@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entity/course.entity';
-import { Between, In, LessThan, MoreThan, Repository } from 'typeorm';
+import { Between, Brackets, In, LessThan, MoreThan, Repository } from 'typeorm';
 import { CourseDto } from './dto/course.dto';
 import * as moment from 'moment';
 
@@ -55,26 +55,37 @@ export class CourseRepository {
   ): Promise<Course[]> {
     const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
     const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
-    return await this.courseRepository.find({
-      where: {
-        user: { userId },
-        lecture: { lectureDate: Between(startOfMonth, endOfMonth) },
-      },
-      relations: ['user', 'lecture', 'lecture.user', 'lecture.user.customer'],
-    });
+
+    return await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.lecture', 'lecture')
+      .leftJoinAndSelect('lecture.user', 'lectureUser')
+      .leftJoinAndSelect('lectureUser.customer', 'customer')
+      .where('course.userId = :userId', { userId })
+      .andWhere(
+        '(lecture.lectureDate IS NULL OR lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth)',
+        { startOfMonth, endOfMonth },
+      )
+      .getMany();
   }
 
   /* 달력에 맞춰 강좌 조회(customer) */
   async findAllCoursesForScheduleByCustomer(userId: number): Promise<Course[]> {
     const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
     const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
-    return await this.courseRepository.find({
-      where: {
-        member: { user: { userId } },
-        lecture: { lectureDate: Between(startOfMonth, endOfMonth) },
-      },
-      relations: ['user', 'lecture', 'lecture.user'],
-    });
+
+    return await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.lecture', 'lecture')
+      .leftJoinAndSelect('lecture.user', 'lectureUser')
+      .leftJoinAndSelect('course.member', 'member')
+      .leftJoinAndSelect('member.user', 'memberUser')
+      .where('memberUser.userId = :userId', { userId })
+      .andWhere(
+        '(lecture.lectureDate IS NULL OR lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth)',
+        { startOfMonth, endOfMonth },
+      )
+      .getMany();
   }
 
   /* 겹치는 시간대 강좌 확인 */
@@ -84,27 +95,29 @@ export class CourseRepository {
   ): Promise<Course> {
     const { courseDays, courseStartTime, courseEndTime } = courseDto;
 
-    // 요일을 배열로 변환
-    if (courseDays.includes(',')) {
-      // days를 분리
-      const daysArray = courseDays.split(',');
-      return await this.courseRepository.findOne({
-        where: {
-          user: { userId },
-          courseDays: In(daysArray),
-          courseStartTime: LessThan(courseEndTime),
-          courseEndTime: MoreThan(courseStartTime),
-        },
-      });
-    } else {
-      return await this.courseRepository.findOne({
-        where: {
-          user: { userId },
-          courseDays: courseDays,
-          courseStartTime: LessThan(courseEndTime),
-          courseEndTime: MoreThan(courseStartTime),
-        },
-      });
-    }
+    const daysArray = courseDays.includes(',')
+      ? courseDays.split(',')
+      : [courseDays];
+
+    const query = this.courseRepository
+      .createQueryBuilder('course')
+      .where('course.userId = :userId', { userId });
+
+    query.andWhere(
+      new Brackets((qb) => {
+        daysArray.forEach((day, index) => {
+          qb.orWhere(
+            `(course.courseDays LIKE :day${index} AND NOT (course.courseEndTime <= :courseStartTime OR course.courseStartTime >= :courseEndTime))`,
+            {
+              [`day${index}`]: `%${day}%`,
+              courseStartTime,
+              courseEndTime,
+            },
+          );
+        });
+      }),
+    );
+
+    return await query.getOne();
   }
 }
