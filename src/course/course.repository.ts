@@ -58,6 +58,7 @@ export class CourseRepository {
 
     return await this.courseRepository
       .createQueryBuilder('course')
+      .leftJoinAndSelect('course.user', 'user')
       .leftJoinAndSelect('course.lecture', 'lecture')
       .leftJoinAndSelect('lecture.user', 'lectureUser')
       .leftJoinAndSelect('lectureUser.customer', 'customer')
@@ -76,6 +77,7 @@ export class CourseRepository {
 
     return await this.courseRepository
       .createQueryBuilder('course')
+      .leftJoinAndSelect('course.user', 'user')
       .leftJoinAndSelect('course.lecture', 'lecture')
       .leftJoinAndSelect('lecture.user', 'lectureUser')
       .leftJoinAndSelect('course.member', 'member')
