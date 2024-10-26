@@ -13,7 +13,7 @@ export class LectureController {
 
   /* 수강생이 강좌에 자리가 있을 때 담당 강사의 강좌 내에서 자리를 옮길 수 있음
     (보강 자리가 있으면 보강을 잡는 개념과 비슷하다.) */
-  @Patch()
+  @Patch(':lectureId')
   async updateLecture(
     @Param('lectureId') lectureId: number,
     @Body() updateLectureDto: UpdateLectureDto,
