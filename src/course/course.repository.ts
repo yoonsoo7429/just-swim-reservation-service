@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './entity/course.entity';
-import { Between, Brackets, In, LessThan, MoreThan, Repository } from 'typeorm';
+import { Brackets, Repository, UpdateResult } from 'typeorm';
 import { CourseDto } from './dto/course.dto';
 import * as moment from 'moment';
+import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Injectable()
 export class CourseRepository {
@@ -121,5 +122,13 @@ export class CourseRepository {
     );
 
     return await query.getOne();
+  }
+
+  /* 강좌 수정 */
+  async updateCourse(
+    courseId: number,
+    updateCourseDto: UpdateCourseDto,
+  ): Promise<UpdateResult> {
+    return await this.courseRepository.update(courseId, updateCourseDto);
   }
 }

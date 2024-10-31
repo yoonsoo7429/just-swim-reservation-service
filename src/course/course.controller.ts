@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Res } from '@nestjs/common';
 import { CourseService } from './course.service';
 import { CourseDto } from './dto/course.dto';
 import { Response } from 'express';
 import { ResponseService } from 'src/common/response/response.service';
 import { UserType } from 'src/users/enum/user-type.enum';
+import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Controller()
 export class CourseController {
@@ -68,5 +69,19 @@ export class CourseController {
     );
 
     this.responseService.success(res, '달력에 맞춘 강좌 조회 성공', courses);
+  }
+
+  /* 강좌 수정 */
+  @Patch('course/:courseId')
+  async updateCourse(
+    @Param('courseId') courseId: number,
+    @Body() updateCourseDto: UpdateCourseDto,
+    @Res() res: Response,
+  ) {
+    const { userId } = res.locals.user;
+
+    await this.courseService.updateCourse(userId, courseId, updateCourseDto);
+
+    this.responseService.success(res, '강좌 수정 성공');
   }
 }
