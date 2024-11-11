@@ -49,9 +49,11 @@ export class UsersController {
       const token = await this.authService.getToken(exUser.userId);
       const query = '?token=' + token;
       if (exUser.customer.length > 0 || exUser.instructor.length > 0) {
-        res.redirect(process.env.SCHEDULE_URI);
+        return res.redirect(process.env.SCHEDULE_URI + `/${query}`);
       }
-      res.redirect(process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`);
+      return res.redirect(
+        process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`,
+      );
     }
 
     if (!exUser) {
@@ -63,9 +65,11 @@ export class UsersController {
       const token = await this.authService.getToken(newUser.userId);
       const query = '?token=' + token;
       if (exUser.customer.length > 0 || exUser.instructor.length > 0) {
-        res.redirect(process.env.SCHEDULE_URI);
+        return res.redirect(process.env.SCHEDULE_URI + `/${query}`);
       }
-      res.redirect(process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`);
+      return res.redirect(
+        process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`,
+      );
     }
   }
 
