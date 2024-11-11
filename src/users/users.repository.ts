@@ -16,7 +16,10 @@ export class UsersRepository {
     email: string,
     provider: string,
   ): Promise<Users | undefined> {
-    return await this.usersRepository.findOne({ where: { email, provider } });
+    return await this.usersRepository.findOne({
+      where: { email, provider },
+      relations: ['customer', 'instructor'],
+    });
   }
 
   /* newUser 생성 */

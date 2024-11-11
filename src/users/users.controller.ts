@@ -48,6 +48,9 @@ export class UsersController {
     if (exUser) {
       const token = await this.authService.getToken(exUser.userId);
       const query = '?token=' + token;
+      if (exUser.customer.length > 0 || exUser.instructor.length > 0) {
+        res.redirect(process.env.SCHEDULE_URI);
+      }
       res.redirect(process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`);
     }
 
@@ -59,6 +62,9 @@ export class UsersController {
       const newUser = await this.usersService.createUser(newUserDto);
       const token = await this.authService.getToken(newUser.userId);
       const query = '?token=' + token;
+      if (exUser.customer.length > 0 || exUser.instructor.length > 0) {
+        res.redirect(process.env.SCHEDULE_URI);
+      }
       res.redirect(process.env.SELECT_USERTYPE_REDIRECT_URI + `/${query}`);
     }
   }
