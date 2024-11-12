@@ -20,4 +20,8 @@ export class CourseDto {
   @IsNotEmpty()
   @IsNumber()
   readonly courseCapacity: number;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly courseColor: string;
 }

@@ -37,6 +37,9 @@ export class Course {
   @Column({ type: 'int' })
   courseCapacity: number;
 
+  @Column({ type: 'varchar' })
+  courseColor: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   courseCreatedAt: Date;
 

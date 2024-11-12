@@ -20,4 +20,8 @@ export class UpdateCourseDto {
   @IsOptional()
   @IsNumber()
   readonly courseCapacity: number;
+
+  @IsOptional()
+  @IsString()
+  readonly courseColor: string;
 }

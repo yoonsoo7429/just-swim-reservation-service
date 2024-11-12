@@ -20,6 +20,7 @@ export class CourseRepository {
       courseStartTime,
       courseEndTime,
       courseCapacity,
+      courseColor,
     } = courseDto;
 
     const course = this.courseRepository.create({
@@ -28,6 +29,7 @@ export class CourseRepository {
       courseStartTime,
       courseEndTime,
       courseCapacity,
+      courseColor,
       user: { userId },
     });
     await this.courseRepository.save(course);
