@@ -82,15 +82,17 @@ export class CourseRepository {
     return await this.courseRepository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.user', 'user')
-      .leftJoinAndSelect('course.lecture', 'lecture')
+      .leftJoinAndSelect(
+        'course.lecture',
+        'lecture',
+        'lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth',
+        { startOfMonth, endOfMonth },
+      )
       .leftJoinAndSelect('lecture.user', 'lectureUser')
+      .leftJoinAndSelect('lectureUser.customer', 'customer')
       .leftJoinAndSelect('course.member', 'member')
       .leftJoinAndSelect('member.user', 'memberUser')
       .where('memberUser.userId = :userId', { userId })
-      .andWhere(
-        '(lecture.lectureDate IS NULL OR lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth)',
-        { startOfMonth, endOfMonth },
-      )
       .getMany();
   }
 
