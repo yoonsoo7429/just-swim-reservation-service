@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -144,13 +145,26 @@ export class LectureService {
       throw new BadRequestException('담당 강사님 강좌 외의 이동은 불가합니다.');
     }
 
+    const lectureDate = moment(lecture.lectureDate).startOf('day');
+    const today = moment().startOf('day');
+    const targetDate = moment(updateLectureDto.lectureDate).startOf('day');
+
     // 사용자 권한 확인
     if (userType === UserType.Customer) {
-      // 수강생은 자신이 등록된 강의만 수정 가능
-      if (lecture.user.userId !== userId) {
-        throw new UnauthorizedException(
-          '수강생으로서 강의 수정 권한이 없습니다.',
-        );
+      // 오늘 날짜의 강의일 경우 처리
+      if (lectureDate.isSame(today)) {
+        if (targetDate.diff(today, 'days') <= 2) {
+          throw new BadRequestException(
+            '오늘 날짜의 강의는 3일 이상되는 날짜로만 변경이 가능합니다.',
+          );
+        }
+      } else {
+        // 오늘 날짜가 아닌 강의의 경우
+        if (targetDate.isSameOrBefore(today)) {
+          throw new BadRequestException(
+            '오늘 이후의 날짜로만 변경 가능합니다.',
+          );
+        }
       }
 
       // 강의 여유 자리 확인
@@ -164,6 +178,13 @@ export class LectureService {
       const lectureCount = currentLectures.length;
       if (lectureCount >= courseCapacity) {
         throw new BadRequestException('해당 시간대의 여유 자리가 없습니다.');
+      }
+
+      // 수강생은 자신이 등록된 강의만 수정 가능
+      if (lecture.user.userId !== userId) {
+        throw new UnauthorizedException(
+          '수강생으로서 강의 수정 권한이 없습니다.',
+        );
       }
 
       const updateResult = await this.lectureRepository.updateLecture(
@@ -185,6 +206,7 @@ export class LectureService {
       if (lecture.course.user.userId !== userId) {
         throw new UnauthorizedException('강사로서 강의 수정 권한이 없습니다.');
       }
+
       const updateResult = await this.lectureRepository.updateLecture(
         lecture.user.userId,
         lectureId,
@@ -197,6 +219,8 @@ export class LectureService {
 
       return updateResult;
     }
+
+    throw new ForbiddenException('권한이 없습니다.');
   }
 
   /* 매일 자정에 지난 강의는 DeletedAt으로 처리 해주기 */

@@ -79,7 +79,7 @@ export class CourseRepository {
     const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
     const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
 
-    return await this.courseRepository
+    const courses = await this.courseRepository
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.user', 'user')
       .leftJoinAndSelect(
@@ -90,10 +90,34 @@ export class CourseRepository {
       )
       .leftJoinAndSelect('lecture.user', 'lectureUser')
       .leftJoinAndSelect('lectureUser.customer', 'customer')
-      .leftJoinAndSelect('course.member', 'member')
-      .leftJoinAndSelect('member.user', 'memberUser')
-      .where('memberUser.userId = :userId', { userId })
+      .where('lectureUser.userId = :userId', { userId })
       .getMany();
+
+    const authorUserIds = courses.map((course) => course.user.userId);
+
+    const additionalCourses =
+      authorUserIds.length > 0
+        ? await this.courseRepository
+            .createQueryBuilder('course')
+            .leftJoinAndSelect('course.user', 'user')
+            .leftJoinAndSelect(
+              'course.lecture',
+              'lecture',
+              'lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth',
+              { startOfMonth, endOfMonth },
+            )
+            .leftJoinAndSelect('lecture.user', 'lectureUser')
+            .leftJoinAndSelect('lectureUser.customer', 'customer')
+            .where('user.userId IN (:...authorUserIds)', { authorUserIds })
+            .getMany()
+        : [];
+
+    const courseMap = new Map<number, Course>();
+    [...courses, ...additionalCourses].forEach((course) => {
+      courseMap.set(course.courseId, course);
+    });
+
+    return Array.from(courseMap.values());
   }
 
   /* 겹치는 시간대 강좌 확인 */
