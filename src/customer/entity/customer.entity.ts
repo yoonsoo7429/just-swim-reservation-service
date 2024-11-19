@@ -34,7 +34,10 @@ export class Customer {
   customerGender: string;
 
   @Column({ type: 'varchar' })
-  customerAddress: string;
+  customerPickUpLocation: string;
+
+  @Column({ type: 'varchar' })
+  customerDropOffLocation: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   customerCreatedAt: Date;

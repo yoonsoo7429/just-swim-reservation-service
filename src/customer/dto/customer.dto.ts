@@ -23,5 +23,9 @@ export class CustomerDto {
 
   @IsNotEmpty()
   @IsString()
-  readonly customerAddress: string;
+  readonly customerPickUpLocation: string;
+
+  @IsNotEmpty()
+  @IsString()
+  readonly customerDropOffLocation: string;
 }

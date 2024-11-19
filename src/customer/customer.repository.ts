@@ -22,7 +22,8 @@ export class CustomerRepository {
       customerBirth,
       customerPhoneNumber,
       customerGender,
-      customerAddress,
+      customerPickUpLocation,
+      customerDropOffLocation,
     } = customerDto;
 
     const customer = this.customerRepository.create({
@@ -31,7 +32,8 @@ export class CustomerRepository {
       customerBirth,
       customerPhoneNumber,
       customerGender,
-      customerAddress,
+      customerPickUpLocation,
+      customerDropOffLocation,
       user: { userId },
     });
     await this.customerRepository.save(customer);
