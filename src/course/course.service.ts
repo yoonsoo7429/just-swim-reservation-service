@@ -12,10 +12,14 @@ import { Course } from './entity/course.entity';
 import { UserType } from 'src/users/enum/user-type.enum';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Lecture } from 'src/lecture/entity/lecture.entity';
+import { LectureRepository } from 'src/lecture/lecture.repository';
 
 @Injectable()
 export class CourseService {
-  constructor(private readonly courseRepository: CourseRepository) {}
+  constructor(
+    private readonly courseRepository: CourseRepository,
+    private readonly lectureRepository: LectureRepository,
+  ) {}
 
   /* 강좌 개설 */
   async createCourse(userId: number, courseDto: CourseDto): Promise<Course> {
@@ -68,7 +72,9 @@ export class CourseService {
     // 수강생 조회
     if (userType === UserType.Customer) {
       const coursesByCustomer =
-        await this.courseRepository.findAllCoursesForScheduleByCustomer(userId);
+        await this.lectureRepository.findAllCoursesForScheduleByCustomer(
+          userId,
+        );
       return coursesByCustomer;
     }
 

@@ -65,4 +65,25 @@ export class LectureRepository {
       .andWhere('lectureDeletedAt IS NULL')
       .execute();
   }
+
+  /* 달력에 맞춰 강좌 조회(customer) */
+  async findAllCoursesForScheduleByCustomer(
+    userId: number,
+  ): Promise<Lecture[]> {
+    const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
+    const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
+
+    return await this.lectureRepository
+      .createQueryBuilder('lecture')
+      .leftJoinAndSelect('lecture.user', 'user')
+      .leftJoinAndSelect('lecture.course', 'course')
+      .leftJoinAndSelect('user.customer', 'customer')
+      .leftJoinAndSelect('course.user', 'courseUser')
+      .where('lecture.userId = :userId', { userId })
+      .andWhere('lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth', {
+        startOfMonth,
+        endOfMonth,
+      })
+      .getMany();
+  }
 }
