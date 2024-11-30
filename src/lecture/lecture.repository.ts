@@ -79,6 +79,10 @@ export class LectureRepository {
       .leftJoinAndSelect('lecture.course', 'course')
       .leftJoinAndSelect('user.customer', 'customer')
       .leftJoinAndSelect('course.user', 'courseUser')
+      .leftJoinAndSelect('courseUser.course', 'courseOfInstructor')
+      .leftJoinAndSelect('course.lecture', 'courseLecture')
+      .leftJoinAndSelect('courseLecture.user', 'member')
+      .leftJoinAndSelect('member.customer', 'customerInfo')
       .where('lecture.userId = :userId', { userId })
       .andWhere('lecture.lectureDate BETWEEN :startOfMonth AND :endOfMonth', {
         startOfMonth,
